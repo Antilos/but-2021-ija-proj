@@ -16,7 +16,7 @@ public class GridMap {
         this.grid = new GridNode[width*height];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                grid[i + j * width] = new GridNode(i, j);
+                grid[i + j * width] = new GridNode(i, j, this);
             }
         }
     }

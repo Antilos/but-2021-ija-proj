@@ -8,16 +8,19 @@ public class GridNode implements Targetable {
     private final int x;
     private final int y;
     private boolean obstructed;
+    private final GridMap parentMap;
 
-    public GridNode(int x, int y) {
+    public GridNode(int x, int y, GridMap parentMap) {
         this.x = x;
         this.y = y;
+        this.parentMap = parentMap;
         this.obstructed = false;
     }
 
-    public GridNode(int x, int y, boolean isObstructed) {
+    public GridNode(int x, int y, GridMap parentMap, boolean isObstructed) {
         this.x = x;
         this.y = y;
+        this.parentMap = parentMap;
         this.obstructed = isObstructed;
     }
 
@@ -181,4 +184,23 @@ public class GridNode implements Targetable {
         }
     }
 
+    /**
+     * Finds the node that is closest to the target, and is adjacent to this node and is unobstructed
+     * @param target
+     * @return the closest unobstructed node to target that is adjacent to this, or null if no such node exists (i.e. if all adjacent nodes are obstructed)
+     */
+    public GridNode getClosestUnobstructedAdjacent(Targetable target) {
+        List<GridNode> neigh = this.parentMap.getUnobstructedNeighbours(this);
+        GridNode result = null;
+        int distance = Integer.MAX_VALUE;
+
+        for(GridNode node : neigh){
+            int newDistance = node.distance(target);
+            if(newDistance < distance){
+                result = node;
+                distance = newDistance;
+            }
+        }
+        return result;
+    }
 }

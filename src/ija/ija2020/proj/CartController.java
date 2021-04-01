@@ -6,17 +6,65 @@ import ija.ija2020.proj.store.GoodsOrder;
 import ija.ija2020.proj.store.map.StoreNode;
 import ija.ija2020.proj.vehicle.Cart;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-public class CartController {
-    private final MainController mainController = MainController.getInstance();
+public class CartController implements Observer {
 
-    private List<Cart> carts = new LinkedList<>();
+    private int cartCapacity;
+    private Queue<Cart> freeCarts = new LinkedList<>();
+    private Queue<Cart> activeCarts = new LinkedList<>();
 
-    public void spawnCart(String name, int capacity, int speed,  StoreNode spawnPoint, GoodsOrder order){
+    private final int DEFAULT_CART_CAPACITY = 10;
+    private final int DEFAULT_CART_SPEED = 1;
+    private final StoreNode spawnPoint;
+
+    public CartController(int cartCapacity, StoreNode spawnPoint) {
+        this.cartCapacity = cartCapacity;
+        this.spawnPoint = spawnPoint;
+    }
+
+    public int getCartCapacity() {
+        return cartCapacity;
+    }
+
+    public void setCartCapacity(int cartCapacity) {
+        this.cartCapacity = cartCapacity;
+    }
+
+    private Cart spawnCart(int capacity, int speed, StoreNode spawnPoint){
         //create new cart (it starts itself automatically)
-        Cart cart = new Cart(name, capacity, speed, mainController.getMap(), spawnPoint, order);
-        this.carts.add(cart);
+        Cart cart = new Cart(this, capacity, speed, MainController.getInstance().getMap(), spawnPoint);
+        return cart;
+    }
+
+    /**
+     * Accepts order if there are carts available
+     * @param order order to assign to a cart
+     * @return The cart that was assigned to fullfil this order, or null if there is no cart available
+     */
+    public Cart acceptOrder(GoodsOrder order){
+        Cart cart = this.freeCarts.poll();
+        if(cart == null) {
+            if (this.cartCapacity - this.activeCarts.size() > 0){
+                cart = spawnCart(DEFAULT_CART_CAPACITY, DEFAULT_CART_SPEED, spawnPoint);
+            }else{
+                return null;
+            }
+        }
+        cart.acceptOrder(order);
+        this.activeCarts.add(cart);
+        return cart;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        //Observes carts to see when they become free
+        if (o instanceof Cart){
+            Cart cart = (Cart) o;
+            if(cart.isFree()){
+                this.activeCarts.remove(cart);
+                this.freeCarts.add(cart);
+            }
+        }
     }
 }

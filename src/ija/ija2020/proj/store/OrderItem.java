@@ -1,5 +1,7 @@
 package ija.ija2020.proj.store;
 
+import ija.ija2020.proj.vehicle.Cart;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,15 +39,16 @@ public class OrderItem {
     /**
      * Gathers as many items as possible from the shelf.
      * @param shelf Shelf to gather items from
+     * @param parentCart cart into which to gather items
      * @return The amount of items gathered
      */
-    public int gatherFromShelf(GoodsShelf shelf){
+    public int gatherFromShelf(GoodsShelf shelf, Cart parentCart){
         int amountToGather = 0;
         if (shelf.containsGoods(this.goodsType)){
             amountToGather = shelf.size(this.goodsType) >= this.getAmountRemaining() ? this.getAmountRemaining() : this.getAmountRemaining() - shelf.size(this.goodsType);
 
             for(int i = 0; i < amountToGather; i++){
-                this.gatheredItems.add(shelf.removeAny(this.goodsType));
+                this.gatheredItems.add(shelf.takeAnyOfType(this.goodsType, parentCart));
             }
             this.gather(amountToGather);
         }

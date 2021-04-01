@@ -2,6 +2,7 @@ package ija.ija2020.proj.store;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Goods {
 
@@ -14,26 +15,16 @@ public class Goods {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 17;
-        result = prime * result + name.hashCode();
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Goods goods = (Goods) o;
+        return name.equals(goods.name);
     }
 
     @Override
-    public boolean equals(Object o){
-        if(this == o){
-            return true;
-        }
-        if(null == o){
-            return false;
-        }
-        if(!(o instanceof ija.ija2020.homework1.goods.Goods)) {
-            return false;
-        }
-        ija.ija2020.homework1.goods.Goods goods = (ija.ija2020.homework1.goods.Goods) o;
-        return goods.getName().equals(this.getName());
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     public String getName() {
