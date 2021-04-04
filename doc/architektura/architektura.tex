@@ -1,0 +1,33 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{rotating}
+
+\author{Jakub Kocalka, xkocal00; Juraj Sloboda, xslobo07}
+\title{IJA Projekt 2021}
+\begin{document}
+	\maketitle
+	
+	\begin{sidewaysfigure}[ht]
+		\includegraphics[width=\textwidth]{ija-diagram-division.png}
+	\end{sidewaysfigure}
+
+%	\includegraphics[width=\pagewidth]{ija-diagram-division.png}
+
+	\section{Náčrt rozdelenia práce}
+	\subsection{xkocal00}
+	Košíky. Plnenie objednávok košíkmi. Košík vie prijať objednávku, nájsť najbližšií regál ktorý obsahuje potrebný tovar, nájsť cestu k tomuto regálu (A* pathfinding), a naplánovať si do kalendára udalosti potrebné k svojmu pohybu.
+	
+	Po príchode k regálu košík naberie tovar. Po zozbieraní potrebnáho tovaru si košík naplánuje cestu k výdajnému miestu.
+	
+	Košík v súčastnosti nepredpokladá že v obchode nie je dostatočné množstvo tovaru na splnenie objednávky, ani nepočíta s kapacitou košíku.
+	
+	\subsection{xslobo07} 
+	Načítanie dát zo súboru (velkosť obchodu, typy tovaru, umiestnenia a mená regálov, tovar na regáloch, objednávky). Diskrétna mapa obchodu, zložená so štvorcov. Regále s tovarom, naskladnenie a vyskladnenie tovaru medzi košíkmi a regálmi.
+	
+\end{document}
