@@ -5,7 +5,7 @@
   <!-- Definice promenne Hodi se aby byly vsechny modifikovatelne hodnoty na jednom miste -->
   <property name="build.dir" location="build"/> <!-- slozka pro zkompilovane zdrojaky -->
   <property name="dist.dir" location="dest"/> <!-- slozka pro vysledny jar -->
-  <property name="docs.dir" location="docs"/> <!-- slozka pro generaci dokumentace -->
+  <property name="docs.dir" location="doc"/> <!-- slozka pro generaci dokumentace -->
   <property name="lib.dir" location="lib"/> <!-- slozka s knihovnama -->
   <property name="res.dir" location="data"/> <!-- napriklad fxml layout -->
   <property name="jar.name" value="ija-app"/><!-- nazev vysledneho jar archivu -->
