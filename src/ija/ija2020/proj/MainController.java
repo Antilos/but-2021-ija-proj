@@ -18,6 +18,11 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
 
+/**
+ * Controls the flow of the program. Runs the simulation
+ *
+ * Runs a discreet simulation of NextEvent type that simulates the warehouse.
+ */
 public class MainController implements Observer{
     private static MainController instance = null;
 
