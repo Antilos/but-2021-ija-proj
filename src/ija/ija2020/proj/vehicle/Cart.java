@@ -18,7 +18,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
-public class Cart extends Observable implements Movable, TimeUpdateable, Stockable {
+/**
+ * Vehicle that can move through a store to fulfill orders
+ * @see CartController
+ * @see GoodsOrder
+ */
+public class Cart extends Observable implements Movable, Stockable {
     private static final long START_UP_DELAY = 1;
     private final MainController mainController = MainController.getInstance();
     private final CartController parentController;
@@ -37,6 +42,16 @@ public class Cart extends Observable implements Movable, TimeUpdateable, Stockab
     private boolean isDroppingOff = false;
     private boolean isFree = true;
 
+    /**
+     * Creates a new cart with a capacity and speed
+     * Should be called from a CartController, otherwise the behaviour is undefined.
+     * @see CartController
+     * @param parentController The controller that handles this cart
+     * @param capacity Number of items this cart can hold at once
+     * @param speed Speed at which the cart moves in units per second
+     * @param map Map through this cart will move
+     * @param pos Node on which this cart will spawn
+     */
     public Cart(CartController parentController, int capacity, int speed, StoreMap map, StoreNode pos) {
         this.parentController = parentController;
         this.addObserver(parentController);
@@ -68,6 +83,10 @@ public class Cart extends Observable implements Movable, TimeUpdateable, Stockab
         }
     }
 
+    /**
+     * Is this car currently fulfilling an order
+     * @return True if this cart is NOT currently fulfilling an order, False otherwise
+     */
     public boolean isFree() {
         return isFree;
     }
@@ -101,7 +120,10 @@ public class Cart extends Observable implements Movable, TimeUpdateable, Stockab
         return Math.abs(target.getX() - pos.getX()) + Math.abs(target.getY() - pos.getY());
     }
 
-    @Override
+    /**
+     * Calendar event for moving the cart
+     * @param time time now
+     */
     public void update(LocalTime time) {
         System.out.println("T=" + time.toString() + " | Cart " + this.toString() + ": (" + this.getX() + ", " + this.getY() + ")");
 

@@ -1,5 +1,8 @@
 package ija.ija2020.proj.geometry;
 
+/**
+ * Object that has position in 2D space and a distance to it can be computed from another Targetable object
+ */
 public interface Targetable {
     /**
      * Get x coordinate of the target

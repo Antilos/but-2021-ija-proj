@@ -10,6 +10,11 @@ public class GridMap {
     private final int height;
     protected final GridNode[] grid;
 
+    /**
+     * New grid map with hte specified dimensions
+     * @param height
+     * @param width
+     */
     public GridMap(int height, int width) {
         this.width = width;
         this.height = height;
@@ -46,6 +51,11 @@ public class GridMap {
         }
     }
 
+    /**
+     * Get node by position
+     * @param pos Position of the node
+     * @return node on this map that has the same coordinates as the specified position, or null if there is no such node
+     */
     public GridNode getNode(Targetable pos){
         int index = pos.getX() + pos.getY() * width;
         if (index >= width * height || index < 0) {
@@ -56,6 +66,13 @@ public class GridMap {
     }
 
     private final int[][] NEIGHBOUR_MODS = {{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1},{0,1}};
+
+    /**
+     * Get a list of nodes adjacent to the specified position that are not obstructed
+     * @param x vertical coordinate of the central node
+     * @param y horizontal coordinate of the central node
+     * @return all unobstructed nodes adjacent to the specified central node
+     */
     public List<GridNode> getUnobstructedNeighbours(int x, int y){
         List<GridNode> result = new LinkedList<GridNode>();
 
@@ -74,6 +91,11 @@ public class GridMap {
         return result;
     }
 
+    /**
+     * Get a list of nodes adjacent to the specified node that are not obstructed
+     * @param node central node
+     * @return all unobstructed nodes adjacent to the specified central node
+     */
     public List<GridNode> getUnobstructedNeighbours(GridNode node){
         List<GridNode> result = new LinkedList<GridNode>();
 

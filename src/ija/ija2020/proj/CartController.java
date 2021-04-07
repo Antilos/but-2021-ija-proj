@@ -8,6 +8,10 @@ import ija.ija2020.proj.vehicle.Cart;
 
 import java.util.*;
 
+/**
+ * Spawns and aggregates Carts. Accepts orders and assigns them to carts.
+ * @see Cart
+ */
 public class CartController implements Observer {
 
     private int cartCapacity;

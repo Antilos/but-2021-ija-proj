@@ -53,7 +53,7 @@
       <!-- pridani resources souboru ze slozky s resources do jaru napriklad fxml layout -->
       <manifest>
         <!-- manifest = soubor s informacemi o souborech ulozenych v jaru -->
-        <attribute name="Main-Class" value="ija.ija2020.proj.MainController"/>
+        <attribute name="Main-Class" value="ija.ija2020.proj.Xkocal00Main"/>
         <!-- Main-Class udava hlavni tridu aplikace. Hodnota je package tridy + nazev tridy-->
       </manifest>
       <zipgroupfileset dir="${lib.dir}" includes="**/*.jar"/>

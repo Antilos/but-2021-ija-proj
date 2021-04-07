@@ -4,6 +4,7 @@ package ija.ija2020.proj.store;
 
 /**
  * Represents an entity that can hold goods, i.e. a shelf or a cart
+ * @see GoodsItem
  */
 public interface Stockable {
 

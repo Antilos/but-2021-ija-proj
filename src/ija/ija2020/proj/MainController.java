@@ -145,7 +145,11 @@ public class MainController implements Observer{
         this.loadDefaultStocks(defaultStockFilename);
     }
 
-    private void processOrderAction(LocalTime t){
+    /**
+     * Calendar event action that tries to assign as many waiting orders to carts as possible
+     * @param t time
+     */
+    public void processOrderAction(LocalTime t){
         GoodsOrder order;
 
         //try to process as many orders as possible at once
@@ -181,7 +185,7 @@ public class MainController implements Observer{
                             time = time.plusSeconds(tStep);
 
                             try {
-                                System.out.println(String.format("T=%s | going to sleep for %d seconds", time.toString(), tStep));
+                                //System.out.println(String.format("T=%s | going to sleep for %d seconds", time.toString(), tStep));
                                 this.sleep(tStep*1000);
                             } catch (InterruptedException interruptedException) {
                                 interruptedException.printStackTrace();
@@ -190,7 +194,7 @@ public class MainController implements Observer{
                         }
 
                         //perform event
-                        System.out.println(String.format("T=%s | Performing action %s", time.toString(), e.getAction().toString()));
+                        //System.out.println(String.format("T=%s | Performing action %s", time.toString(), e.getAction().toString()));
                         e.performAction(time);
 
                         tStep = normalStepSize;

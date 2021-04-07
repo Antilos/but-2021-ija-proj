@@ -20,12 +20,21 @@ public class StoreMap extends GridMap {
         }
     }
 
+    /**
+     * Adds all shelves in a list to this map
+     * @param shelves
+     */
     public void addShelves(List<GoodsShelf> shelves){
         for(GoodsShelf shelf : shelves){
             this.addShelf(shelf);
         }
     }
 
+    /**
+     * Adds a shelf to this map if it's not a part of this map already.
+     * Also registers this shelf with all nodes that this shelf would lie on
+     * @param shelf
+     */
     public void addShelf(GoodsShelf shelf){
         if (this.shelves.containsKey(shelf.getName())){
             throw new IllegalArgumentException("Shelf " + shelf.toString() + " already part of this map. Remove it first, or use the appropriate method for moving.");
@@ -41,6 +50,11 @@ public class StoreMap extends GridMap {
         }
     }
 
+    /**
+     * Finds all shelves that contain any items of the specified goods type
+     * @param goods goods type
+     * @return a list of shelves that contain the specified goods type
+     */
     public List<GoodsShelf> getShelvesWithGoods(Goods goods){
         List<GoodsShelf> result = new LinkedList<>();
         for (GoodsShelf shelf : this.shelves.values()) {

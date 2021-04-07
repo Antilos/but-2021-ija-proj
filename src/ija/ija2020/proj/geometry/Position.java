@@ -1,5 +1,8 @@
 package ija.ija2020.proj.geometry;
 
+/**
+ * Encodes a position in 2D space
+ */
 public class Position implements Targetable{
 
     private int x;

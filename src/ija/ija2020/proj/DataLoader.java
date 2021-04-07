@@ -16,6 +16,9 @@ import java.util.Map;
 import com.opencsv.CSVReader;
 import javafx.util.Pair;
 
+/**
+ * Reads data from csv files describing a store. See individual methods for descriptions of the corresponding files
+ */
 public class DataLoader {
     /**
      * Reads a file containing a store map definition. The file should have the following format:

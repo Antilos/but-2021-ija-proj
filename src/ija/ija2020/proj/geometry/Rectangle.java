@@ -2,6 +2,9 @@ package ija.ija2020.proj.geometry;
 
 import jdk.jshell.spi.ExecutionControl;
 
+/**
+ * A rectangular area
+ */
 public class Rectangle {
     Position A; //bottom left
     Position B; //top right
@@ -77,6 +80,11 @@ public class Rectangle {
         return Math.min(Math.min(bl, br), Math.min(tr, tl));
     }
 
+    /**
+     * Finds the corner of this area that is the closest to the target
+     * @param from Target from which to compute distance
+     * @return Corner of this area closest to the target (from)
+     */
     public Targetable getClosestCorner(Targetable from){
         Targetable closest = this.getBottomLeft();
         if (this.getBottomRight().distance(from) < closest.distance(from)){

@@ -61,6 +61,14 @@ public class GridNode implements Targetable {
         return Objects.hash(x, y);
     }
 
+    /**
+     * Finds a path from this node to another node through a grid.
+     * Only passes unobstructed nodes.
+     * Uses A* with euqlidean distance as heuristic to find the path
+     * @param grid
+     * @param end
+     * @return Path from the END node to the START node (needs to be polled from the tail)
+     */
     public Deque<GridNode> getPathToNodeOnGrid(GridMap grid, GridNode end){
         class MazeNode{
             public int x;
