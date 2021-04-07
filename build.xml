@@ -20,20 +20,22 @@
   </path>
 
 
-  <target name="clean">
-    <!-- Definice targetu (Spustitelne casti)-->
-    <delete includeemptydirs="true">
-      <fileset dir="build" includes="**/*"/>
-      <fileset dir="dest" includes="**/*"/>
-    </delete>
-    <!-- mazani slozky pro clean -->
-  </target>
   <target name="init">
-    <mkdir dir="${build.dir}"/>
     <!-- vyvtareni souborove struktury-->
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${dist.dir}"/>
   </target>
 
-  <target name="build" depends="clean, init">
+  <target name="clean">
+    <!-- mazani slozky pro clean -->
+    <delete includeemptydirs="true">
+      <fileset dir="${build.dir}" includes="**/*"/>
+      <fileset dir="${dist.dir}" includes="**/*"/>
+      <fileset dir="${docs.dir}" includes="**/*" excludes="**/architektura.pdf"/>
+    </delete>
+  </target>
+
+  <target name="build" depends="clean, init, docs">
     <!-- depends zarucuje provedeni danych targetu pred provedenim targetu compile -->
     <javac srcdir="${src.dir}" destdir="${build.dir}">
       <!-- Samotna kompilace .java zdrojovych souboru ${src.dir} je odkaz na promennou a urcuje slozku se zdrojaky
@@ -62,7 +64,7 @@
     </jar>
   </target>
 
-  <target name="docs" depends="build">
+  <target name="docs">
     <!-- target pro generaci javadoc dokumentace -->
     <javadoc sourcepath="${src.dir}" destdir="${docs.dir}">
       <!-- sourcepath udava slozku se zdrojaky destdir je umisteni vygenerovane dokumentace -->

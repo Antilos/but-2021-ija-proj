@@ -1,7 +1,5 @@
 package ija.ija2020.proj.geometry;
 
-import jdk.jshell.spi.ExecutionControl;
-
 /**
  * A rectangular area
  */
