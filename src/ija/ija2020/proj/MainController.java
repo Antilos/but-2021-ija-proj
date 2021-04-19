@@ -151,6 +151,21 @@ public class MainController implements Observer{
     }
 
     /**
+     * Close off area for carts (make all nodes inside it obstructed)
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     */
+    public void closeArea(int x1, int y1, int x2, int y2){
+        for(int x=x1; x <= x2; x++){
+            for(int y=y1; y < y2; y++){
+                this.getMap().getNode(x, y).setObstructed(true);
+            }
+        }
+    }
+
+    /**
      * Calendar event action that tries to assign as many waiting orders to carts as possible
      * @param t time
      */
