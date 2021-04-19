@@ -1,7 +1,5 @@
 package ija.ija2020.proj;
 
-import ija.ija2020.proj.calendar.Calendar;
-import ija.ija2020.proj.geometry.Position;
 import ija.ija2020.proj.store.GoodsOrder;
 import ija.ija2020.proj.store.map.StoreNode;
 import ija.ija2020.proj.vehicle.Cart;
@@ -18,7 +16,7 @@ public class CartController implements Observer {
     private Queue<Cart> freeCarts = new LinkedList<>();
     private Queue<Cart> activeCarts = new LinkedList<>();
 
-    private final int DEFAULT_CART_CAPACITY = 10;
+    private final int DEFAULT_CART_ITEMS_CAPACITY = 5;
     private final int DEFAULT_CART_SPEED = 1;
     private final StoreNode spawnPoint;
 
@@ -50,7 +48,7 @@ public class CartController implements Observer {
         Cart cart = this.freeCarts.poll();
         if(cart == null) {
             if (this.cartCapacity - this.activeCarts.size() > 0){
-                cart = spawnCart(DEFAULT_CART_CAPACITY, DEFAULT_CART_SPEED, spawnPoint);
+                cart = spawnCart(DEFAULT_CART_ITEMS_CAPACITY, DEFAULT_CART_SPEED, spawnPoint);
             }else{
                 return null;
             }

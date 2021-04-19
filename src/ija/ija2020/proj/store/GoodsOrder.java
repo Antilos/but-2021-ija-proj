@@ -51,7 +51,8 @@ public class GoodsOrder extends Observable{
 
     /**
      * Checks if we've already gathered all the items needed to fulfill this order
-     * @return True if we've already gathered all the items needed to fulfill this order, false otherwise
+     * @return True if we've already gathered all the items needed to fulfill this order, false otherwise.
+     * Will return true even if some of the items were already dropped off
      */
     public boolean isGathered(){
         for (OrderItem item : this.order) {
@@ -66,7 +67,7 @@ public class GoodsOrder extends Observable{
         return isFulfilled;
     }
 
-    public void markAsFullfiled() {
+    public void markAsFulfilled() {
         isFulfilled = true;
         fulfillingVehicle = null;
     }

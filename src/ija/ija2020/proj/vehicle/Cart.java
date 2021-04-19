@@ -2,7 +2,6 @@ package ija.ija2020.proj.vehicle;
 
 import ija.ija2020.proj.CartController;
 import ija.ija2020.proj.MainController;
-import ija.ija2020.proj.TimeUpdateable;
 import ija.ija2020.proj.calendar.Event;
 import ija.ija2020.proj.geometry.Movable;
 import ija.ija2020.proj.geometry.Targetable;
@@ -33,7 +32,7 @@ public class Cart extends Observable implements Movable, Stockable {
     private int speed; //speed in units per second
 
     private GoodsOrder order;
-    private List<GoodsItem> items;
+    private LinkedList<GoodsItem> items;
 
     private Pair<OrderItem, GoodsShelf> closestPair = null;
     private Deque<GridNode> curPath = null;
@@ -91,6 +90,14 @@ public class Cart extends Observable implements Movable, Stockable {
         return isFree;
     }
 
+    public boolean isFull(){
+        return this.items.size() >= this.capacity;
+    }
+
+    public int getRemainingCapacity(){
+        return this.capacity - this.items.size();
+    }
+
     public float getSpeed() {
         return speed;
     }
@@ -120,6 +127,29 @@ public class Cart extends Observable implements Movable, Stockable {
         return Math.abs(target.getX() - pos.getX()) + Math.abs(target.getY() - pos.getY());
     }
 
+    private void plotPathToShelf(GoodsShelf shelf){
+        //get the closest unobstructed node adjacent to the shelf
+        GridNode nextNode = this.map.getNode(
+                shelf.getArea().getClosestCorner(this.getCurNode())
+        ).getClosestUnobstructedAdjacent(this.getCurNode());
+
+        this.curPath = this.getCurNode().getPathToNodeOnGrid(this.map, nextNode);
+    }
+
+    /**
+     * Plot path to the next (closest) item in our order
+     */
+    private void plotNewPath(){
+        this.closestPair = this.order.getClosest(this.map);
+        plotPathToShelf(this.closestPair.getValue());
+    }
+
+    private void plotPathToDropOffPoint(){
+        this.isDroppingOff = true;
+        this.closestPair = null;
+        this.curPath = this.getCurNode().getPathToNodeOnGrid(this.map, this.map.getNode(this.order.getDropOffPoint().getX(), this.order.getDropOffPoint().getY()));
+    }
+
     /**
      * Calendar event for moving the cart
      * @param time time now
@@ -134,15 +164,11 @@ public class Cart extends Observable implements Movable, Stockable {
                     this.moveTo(nextNode); //move to the next node on the path
                 }
             } else {
-                if (this.closestPair == null) { //if we have an order pair, we just need a path to the shelf
-                    //find the shelf for the next order item
-                    this.closestPair = this.order.getClosest(this.map);
-                }
-                //get the closest unobstructed node adjacent to the shelf
-                GridNode nextNode = this.map.getNode(
-                        this.closestPair.getValue().getArea().getClosestCorner(this.getCurNode())
-                ).getClosestUnobstructedAdjacent(this.getCurNode());
-                this.curPath = this.getCurNode().getPathToNodeOnGrid(this.map, nextNode);
+                this.plotNewPath();
+                System.out.println(String.format("T=%s | Cart %s:(%d, %d) Ploting path to shelf %s",
+                        time.toString(), this.toString(), this.getX(), this.getY(),
+                        this.closestPair.getValue().getName()
+                ));
             }
 
             //check whether we made it to the end
@@ -151,38 +177,48 @@ public class Cart extends Observable implements Movable, Stockable {
                     //dump items
                     System.out.println("T=" + time.toString() + " | Cart " + this.toString() + ": (" + this.getX() + ", " + this.getY() + ") Dropping of items.");
                     DropOffPoint dropOffPoint = this.order.getDropOffPoint();
-                    for (GoodsItem item : this.items) {
+                    GoodsItem item;
+                    while((item = this.items.poll()) != null){
                         dropOffPoint.stockItem(item);
                     }
-
-                    //mark order as fullfiled
-                    this.order.markAsFullfiled();
-
-                    //reset cart
-                    this.items = new LinkedList<>();
                     this.isDroppingOff = false;
-                    this.isFree = true;
-                    this.notifyObservers();
+
+                    //check if order is fulfilled, or if this was an intermediary drop off
+                    if(this.order.isGathered()) { //could prob be cashed when setting drop off point
+                        //mark order as fulfilled
+                        this.order.markAsFulfilled();
+                        System.out.println(String.format("T=%s | Cart %s:(%d, %d) Order Fulfilled", time.toString(), this.toString(), this.getX(), this.getY()));
+
+                        //reset cart
+                        this.items = new LinkedList<>();
+                        this.isDroppingOff = false;
+                        this.isFree = true;
+                        this.notifyObservers();
+                        return;
+                    }else { //plot new path
+                        this.plotNewPath();
+                        System.out.println(String.format("T=%s | Cart %s:(%d, %d) Plotting path to shelf %s",
+                                time.toString(), this.toString(), this.getX(), this.getY(),
+                                this.closestPair.getValue().getName()
+                        ));
+                    }
                 } else {
                     //gather from the shelf
                     System.out.println("T=" + time.toString() + " | Cart " + this.toString() + ": (" + this.getX() + ", " + this.getY() + ") Gathering from shelf");
                     closestPair.getKey().gatherFromShelf(closestPair.getValue(), this);
                 }
 
-                //check
-                // if we have gathered all the items
-                if (this.order.isGathered()) {
+                // check if we have gathered all the items or are full
+                if (this.order.isGathered() || this.isFull()) {
                     //plot path to drop off point
-                    this.isDroppingOff = true;
-                    this.curPath = this.getCurNode().getPathToNodeOnGrid(this.map, this.map.getNode(this.order.getDropOffPoint().getX(), this.order.getDropOffPoint().getY()));
-                } else {
+                    System.out.println(String.format("T=%s | Cart %s:(%d, %d) Plotting path to drop off point. Order fulfilled: %s",
+                            time.toString(), this.toString(), this.getX(), this.getY(),
+                            this.order.isGathered()
+                    ));
+                    this.plotPathToDropOffPoint();
+                }else {
                     //get next pair and path
-                    this.closestPair = this.order.getClosest(this.map);
-
-                    GridNode nextNode = this.map.getNode(
-                            this.closestPair.getValue().getArea().getClosestCorner(this.getCurNode())
-                    );
-                    this.curPath = this.getCurNode().getPathToNodeOnGrid(this.map, nextNode);
+                    this.plotNewPath();
                 }
             }
 

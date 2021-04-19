@@ -45,7 +45,13 @@ public class OrderItem {
     public int gatherFromShelf(GoodsShelf shelf, Cart parentCart){
         int amountToGather = 0;
         if (shelf.containsGoods(this.goodsType)){
-            amountToGather = shelf.size(this.goodsType) >= this.getAmountRemaining() ? this.getAmountRemaining() : this.getAmountRemaining() - shelf.size(this.goodsType);
+            amountToGather = Math.min(
+                    shelf.size(this.getGoodsType()),
+                    Math.min(
+                            parentCart.getRemainingCapacity(),
+                            this.getAmountRemaining()
+                    )
+            );
 
             for(int i = 0; i < amountToGather; i++){
                 this.gatheredItems.add(shelf.takeAnyOfType(this.goodsType, parentCart));

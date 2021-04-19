@@ -13,6 +13,11 @@ public interface Stockable {
         public StockableCapacityExceededException(String msg){super(msg);}
     }
 
+    /**
+     * Adds item to this stockable. The caller is responsible for removing the items from their own records
+     * @param item
+     * @throws StockableCapacityExceededException
+     */
     void stockItem(GoodsItem item) throws StockableCapacityExceededException;
 
     /**
