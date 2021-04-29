@@ -3,26 +3,27 @@ package ija.ija2020.proj.vehicle;
 import ija.ija2020.proj.CartController;
 import ija.ija2020.proj.MainController;
 import ija.ija2020.proj.calendar.Event;
+import ija.ija2020.proj.geometry.Drawable;
 import ija.ija2020.proj.geometry.Movable;
 import ija.ija2020.proj.geometry.Targetable;
 import ija.ija2020.proj.map.GridNode;
 import ija.ija2020.proj.store.*;
 import ija.ija2020.proj.store.map.StoreMap;
 import ija.ija2020.proj.store.map.StoreNode;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.util.Pair;
 
 import java.time.LocalTime;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Observable;
+import java.util.*;
 
 /**
  * Vehicle that can move through a store to fulfill orders
  * @see CartController
  * @see GoodsOrder
  */
-public class Cart extends Observable implements Movable, Stockable {
+public class Cart extends Observable implements Movable, Stockable, Drawable {
     private static final long START_UP_DELAY = 1;
     private final MainController mainController = MainController.getInstance();
     private final CartController parentController;
@@ -156,7 +157,7 @@ public class Cart extends Observable implements Movable, Stockable {
      */
     public void update(LocalTime time) {
         System.out.println("T=" + time.toString() + " | Cart " + this.toString() + ": (" + this.getX() + ", " + this.getY() + ")");
-
+        notifyObservers();
         if(!this.isFree) {
             if (this.curPath != null) { //if we already have a path
                 GridNode nextNode = this.curPath.pollLast();
@@ -265,5 +266,17 @@ public class Cart extends Observable implements Movable, Stockable {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<Shape> getGUI() {
+        List<Shape> gui = new ArrayList<>();
+
+        Rectangle rect = new Rectangle(pos.getX()*100,  pos.getY()*100, 100, 100);
+        rect.setFill(Color.RED);
+        rect.setStroke(Color.BLACK);
+        rect.setStrokeWidth(2);
+        gui.add(rect);
+        return gui;
     }
 }
