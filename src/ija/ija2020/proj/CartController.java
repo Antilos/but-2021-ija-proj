@@ -4,7 +4,9 @@ import ija.ija2020.proj.store.GoodsOrder;
 import ija.ija2020.proj.store.map.StoreNode;
 import ija.ija2020.proj.vehicle.Cart;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Spawns and aggregates Carts. Accepts orders and assigns them to carts.
@@ -19,6 +21,8 @@ public class CartController implements Observer {
     private final int DEFAULT_CART_ITEMS_CAPACITY = 5;
     private final int DEFAULT_CART_SPEED = 1;
     private final StoreNode spawnPoint;
+
+    public List<Shape> vehiclesgui = new ArrayList<>();
 
     public CartController(int cartCapacity, StoreNode spawnPoint) {
         this.cartCapacity = cartCapacity;
@@ -36,6 +40,8 @@ public class CartController implements Observer {
     private Cart spawnCart(int capacity, int speed, StoreNode spawnPoint){
         //create new cart (it starts itself automatically)
         Cart cart = new Cart(this, capacity, speed, MainController.getInstance().getMap(), spawnPoint);
+        MainController.getInstance().registerCart(cart);
+
         return cart;
     }
 
@@ -67,6 +73,7 @@ public class CartController implements Observer {
                 this.activeCarts.remove(cart);
                 this.freeCarts.add(cart);
             }
+
         }
     }
 }

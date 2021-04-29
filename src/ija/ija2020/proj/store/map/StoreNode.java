@@ -1,8 +1,15 @@
 package ija.ija2020.proj.store.map;
 
+import ija.ija2020.proj.geometry.Drawable;
 import ija.ija2020.proj.map.GridMap;
 import ija.ija2020.proj.map.GridNode;
 import ija.ija2020.proj.store.GoodsShelf;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StoreNode extends GridNode {
 
@@ -33,5 +40,20 @@ public class StoreNode extends GridNode {
 
     public void setShelf(GoodsShelf shelf) {
         this.shelf = shelf;
+    }
+
+    @Override
+    public List<Shape> getGUI() {
+        List<Shape> gui = new ArrayList<>();
+
+        Rectangle rect = new Rectangle(getX()*100,  getY()*100, 100, 100);
+        rect.setFill(Color.WHITE);
+        rect.setStroke(Color.BLACK);
+        rect.setStrokeWidth(2);
+        if( this.hasShelf() == true){
+            rect.setFill(Color.BLUE);
+        }
+        gui.add(rect);
+        return gui;
     }
 }

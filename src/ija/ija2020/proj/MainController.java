@@ -2,11 +2,27 @@ package ija.ija2020.proj;
 
 import ija.ija2020.proj.calendar.Calendar;
 import ija.ija2020.proj.calendar.Event;
+<<<<<<< HEAD
+import ija.ija2020.proj.geometry.Drawable;
+import ija.ija2020.proj.store.DropOffPoint;
+import ija.ija2020.proj.store.Goods;
+import ija.ija2020.proj.store.GoodsItem;
+import ija.ija2020.proj.store.GoodsOrder;
+=======
 import ija.ija2020.proj.store.*;
+>>>>>>> fbe5308a228335e6529294d8c864559981e3f7f3
 import ija.ija2020.proj.store.map.StoreMap;
 import ija.ija2020.proj.store.map.StoreNode;
+import ija.ija2020.proj.vehicle.Cart;
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.shape.Shape;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.io.IOException;
@@ -22,11 +38,14 @@ import static java.util.stream.Collectors.toMap;
  *
  * Runs a discreet simulation of NextEvent type that simulates the warehouse.
  */
-public class MainController implements Observer{
+public class MainController extends Application implements Observer{
     private static MainController instance = null;
 
     private CartController cartController;
     private DataLoader dataLoader;
+
+    //private List<Shape> elements;
+    private LayoutController layoutcontroller;
 
     private Calendar cal;
     private StoreMap map;
@@ -54,6 +73,15 @@ public class MainController implements Observer{
                 this.activeOrders.remove(order);
                 this.fulfilledOrders.add(order);
             }
+        }
+        if (o instanceof Cart){
+            List<Drawable> elements = new ArrayList<>();
+            System.out.println("update vehicles");
+            Cart cart = (Cart) o;
+            elements.add(cart);
+            Platform.runLater(()-> {
+                layoutcontroller.setElements(elements);
+            });
         }
     }
 
@@ -277,6 +305,7 @@ public class MainController implements Observer{
                                         tStep = endTime.until(time, ChronoUnit.SECONDS);
                                     }
                                     //integration or some shit
+
 //                        System.out.println("T=" + t + " | Cart Position: (" + cart.getX() + ", " + cart.getY() + ")");
                                     time = time.plusSeconds(tStep);
 
@@ -352,6 +381,58 @@ public class MainController implements Observer{
         return MainController.instance;
     }
 
+    public void registerCart(Cart cart){
+        cart.addObserver(this);
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception{
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("layout.fxml"));
+        BorderPane root = loader.load();
+        Scene scene = new Scene(root);
+        primaryStage.setTitle("not so usefull bus map");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+        layoutcontroller = loader.getController();
+
+        MainController mainController = MainController.getInstance();
+        //Start assigning orders
+        mainController.getCalendar().insertEvent(new Event(mainController.getTime(), 1, mainController::processOrderAction));
+
+        System.out.println(map.getHeight() + "dsdaddsdad" + map.getWidth());
+        System.out.println(map.getNode(5,5).getX());
+
+        List<Drawable> elements = new ArrayList<>();
+
+        for(int i = 1; i < map.getHeight(); i++){
+            for(int j = 1; j < map.getWidth(); j++){
+                elements.add(map.getNode(i,j));
+            }
+        }
+        layoutcontroller.setElements(elements);
+
+        System.out.println("Starting simulation");
+        mainController.startSimulation();
+
+
+
+
+        /*Map<String, Stop> stopmap;
+        stopmap = stopMap.getStops();
+        for (String key : stopmap.keySet()) {
+            if(!(stopmap.get(key).getName().equals("k"))){
+                elements.add(stopmap.get(key));
+            }
+        }
+        controller.setElements(elements);*/
+    }
+
+
+    public static void main(String[] args) {
+
+        launch(args);
+    }
+    /*
     public static void main(String[] args) throws IOException {
         MainController mainController = MainController.getInstance();
 
@@ -369,6 +450,7 @@ public class MainController implements Observer{
 
         System.out.println("Starting simulation");
         mainController.startSimulation();
-    }
+    }*/
+
 
 }

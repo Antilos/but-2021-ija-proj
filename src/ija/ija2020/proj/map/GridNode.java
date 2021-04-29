@@ -1,10 +1,17 @@
 package ija.ija2020.proj.map;
 
+import ija.ija2020.proj.geometry.Drawable;
 import ija.ija2020.proj.geometry.Targetable;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
-public class GridNode implements Targetable {
+public class GridNode implements Targetable, Drawable {
     private final int x;
     private final int y;
     private boolean obstructed;
@@ -210,5 +217,17 @@ public class GridNode implements Targetable {
             }
         }
         return result;
+    }
+
+    @Override
+    public List<Shape> getGUI() {
+        List<Shape> gui = new ArrayList<>();
+
+        Rectangle rect = new Rectangle(x*100,  y*100, 100, 100);
+        rect.setFill(Color.WHITE);
+        rect.setStroke(Color.BLACK);
+        rect.setStrokeWidth(2);
+        gui.add(rect);
+        return gui;
     }
 }
