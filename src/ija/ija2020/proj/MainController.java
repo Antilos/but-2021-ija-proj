@@ -8,6 +8,8 @@ import ija.ija2020.proj.store.GoodsItem;
 import ija.ija2020.proj.store.GoodsOrder;
 import ija.ija2020.proj.store.map.StoreMap;
 import ija.ija2020.proj.store.map.StoreNode;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.util.Pair;
 
 import java.io.IOException;
@@ -193,7 +195,7 @@ public class MainController implements Observer{
                 e = cal.getNextEvent();
                 while (e != null) {
                     if (e.getActivationTime().isBefore(endTime)) {
-                        while (time.plusSeconds(tStep).isBefore(e.getActivationTime()) && time.plusSeconds(tStep).isBefore(endTime)) {
+                        while(!time.plusSeconds(tStep).isAfter(e.getActivationTime()) && !time.plusSeconds(tStep).isAfter(endTime)) {
                             if (time.plusSeconds(tStep).isAfter(e.getActivationTime())) {
                                 tStep = e.getActivationTime().until(time, ChronoUnit.SECONDS);
                             }
@@ -242,8 +244,76 @@ public class MainController implements Observer{
         }
     };
 
+    private Service<Void> simService = new Service<Void>(){
+
+        @Override
+        protected Task createTask() {
+            return new Task<Void>(){
+
+                @Override
+                protected Void call() throws Exception {
+                    Event e;
+                    while (time.isBefore(endTime)) {
+                        e = cal.getNextEvent();
+                        while (e != null) {
+                            if (e.getActivationTime().isBefore(endTime)) {
+                                while(!time.plusSeconds(tStep).isAfter(e.getActivationTime()) && !time.plusSeconds(tStep).isAfter(endTime)) {
+                                    if (time.plusSeconds(tStep).isAfter(e.getActivationTime())) {
+                                        tStep = e.getActivationTime().until(time, ChronoUnit.SECONDS);
+                                    }
+                                    if (time.plusSeconds(tStep).isAfter(endTime)) {
+                                        tStep = endTime.until(time, ChronoUnit.SECONDS);
+                                    }
+                                    //integration or some shit
+//                        System.out.println("T=" + t + " | Cart Position: (" + cart.getX() + ", " + cart.getY() + ")");
+                                    time = time.plusSeconds(tStep);
+
+                                    try {
+                                        //System.out.println(String.format("T=%s | going to sleep for %d seconds", time.toString(), tStep));
+                                        Thread.sleep(tStep*1000);
+                                    } catch (InterruptedException interruptedException) {
+                                        interruptedException.printStackTrace();
+                                        break;
+                                    }
+
+                                }
+
+                                //perform event
+                                //System.out.println(String.format("T=%s | Performing action %s", time.toString(), e.getAction().toString()));
+                                e.performAction(time);
+
+                                tStep = normalStepSize;
+                                e = cal.getNextEvent();
+                            }
+                        }
+
+                        while (time.isBefore(endTime)) {
+                            if (time.plusSeconds(tStep).isAfter(endTime)) {
+                                tStep = endTime.until(time, ChronoUnit.SECONDS);
+                            }
+                            //integration or some shit
+//                System.out.println("T=" + t + " | Cart Position: (" + cart.getX() + ", " + cart.getY() + ")");
+                            time = time.plusSeconds(tStep);
+
+                            try {
+                                Thread.sleep(tStep*1000);
+                            } catch (InterruptedException interruptedException) {
+                                interruptedException.printStackTrace();
+                                break;
+                            }
+
+                            tStep = normalStepSize;
+                        }
+                    }
+                    return null;
+                }
+            };
+        }
+    };
+
     public void startSimulation(){
-        this.simulation.run();
+        //this.simulation.run();
+        this.simService.start();
     }
 //    public void startTime(){
 //        this.timer = new Timer(false);

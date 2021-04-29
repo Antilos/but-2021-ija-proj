@@ -225,6 +225,10 @@ public class Cart extends Observable implements Movable, Stockable {
             //schedule new event
             GridNode nextNode = this.curPath.peekLast();
             LocalTime t1 = time.plusSeconds((long) (this.getCurNode().distance(nextNode) / this.getSpeed()));
+            System.out.println(String.format("T=%s | Cart %s:(%d, %d) scheduling event to %s",
+                    time.toString(), this.toString(), this.getX(), this.getY(),
+                    t1.toString()
+            ));
             this.mainController.getCalendar().insertEvent(new Event(t1, 0, this::update));
         }
     }
