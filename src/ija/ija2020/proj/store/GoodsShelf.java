@@ -84,6 +84,23 @@ public class GoodsShelf implements Stockable{
         return null;
     }
 
+    /**
+     * Gets a dictionary containing info about the content of this shelf
+     * @return Content of this shelf in the format <Goods type name, number of items on this shelf>
+     */
+    public Map<String, Integer> getContent(){
+        Map<String, Integer> result = new HashMap<>();
+        for (Map.Entry<Goods, LinkedList<GoodsItem>> entry : this.goodsDict.entrySet()){
+            result.putIfAbsent(entry.getKey().getName(), entry.getValue().size());
+        }
+        return result;
+    }
+
+    /**
+     * Counts number of goods of the specified type on this shelf
+     * @param goods Goods Type to count
+     * @return Number of items of type goods on this shelf
+     */
     public int size(Goods goods) {
         List<GoodsItem> tmp = goodsDict.get(goods);
         if (tmp != null) {
