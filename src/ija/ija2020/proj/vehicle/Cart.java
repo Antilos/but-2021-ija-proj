@@ -171,7 +171,8 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
      */
     public void update(LocalTime time) {
         System.out.println("T=" + time.toString() + " | Cart " + this.toString() + ": (" + this.getX() + ", " + this.getY() + ")");
-        notifyObservers();
+        this.setChanged();
+        this.notifyObservers();
         if(!this.isFree) {
             if (this.curPath != null) { //if we already have a path
                 //check whether the path is still unobstructed
@@ -213,6 +214,7 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
                         this.items = new LinkedList<>();
                         this.isDroppingOff = false;
                         this.isFree = true;
+                        this.setChanged();
                         this.notifyObservers();
                         return;
                     }else { //plot new path

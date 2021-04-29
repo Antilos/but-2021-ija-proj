@@ -2,15 +2,12 @@ package ija.ija2020.proj;
 
 import ija.ija2020.proj.calendar.Calendar;
 import ija.ija2020.proj.calendar.Event;
-<<<<<<< HEAD
 import ija.ija2020.proj.geometry.Drawable;
 import ija.ija2020.proj.store.DropOffPoint;
 import ija.ija2020.proj.store.Goods;
 import ija.ija2020.proj.store.GoodsItem;
 import ija.ija2020.proj.store.GoodsOrder;
-=======
 import ija.ija2020.proj.store.*;
->>>>>>> fbe5308a228335e6529294d8c864559981e3f7f3
 import ija.ija2020.proj.store.map.StoreMap;
 import ija.ija2020.proj.store.map.StoreNode;
 import ija.ija2020.proj.vehicle.Cart;
@@ -43,6 +40,14 @@ public class MainController extends Application implements Observer{
 
     private CartController cartController;
     private DataLoader dataLoader;
+
+    public LayoutController getLayoutcontroller() {
+        return layoutcontroller;
+    }
+
+    public void setLayoutcontroller(LayoutController layoutcontroller) {
+        this.layoutcontroller = layoutcontroller;
+    }
 
     //private List<Shape> elements;
     private LayoutController layoutcontroller;
@@ -80,7 +85,7 @@ public class MainController extends Application implements Observer{
             Cart cart = (Cart) o;
             elements.add(cart);
             Platform.runLater(()-> {
-                layoutcontroller.setElements(elements);
+                MainController.getInstance().getLayoutcontroller().setElements(elements);
             });
         }
     }
@@ -393,9 +398,11 @@ public class MainController extends Application implements Observer{
         primaryStage.setTitle("not so usefull bus map");
         primaryStage.setScene(scene);
         primaryStage.show();
-        layoutcontroller = loader.getController();
 
         MainController mainController = MainController.getInstance();
+
+        mainController.setLayoutcontroller(loader.getController());
+
         //Start assigning orders
         mainController.getCalendar().insertEvent(new Event(mainController.getTime(), 1, mainController::processOrderAction));
 
@@ -404,12 +411,12 @@ public class MainController extends Application implements Observer{
 
         List<Drawable> elements = new ArrayList<>();
 
-        for(int i = 1; i < map.getHeight(); i++){
-            for(int j = 1; j < map.getWidth(); j++){
+        for(int i = 0; i < map.getHeight(); i++){
+            for(int j = 0; j < map.getWidth(); j++){
                 elements.add(map.getNode(i,j));
             }
         }
-        layoutcontroller.setElements(elements);
+        mainController.getLayoutcontroller().setElements(elements);
 
         System.out.println("Starting simulation");
         mainController.startSimulation();

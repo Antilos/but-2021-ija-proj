@@ -67,6 +67,7 @@ public class CartController implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         //Observes carts to see when they become free
+        System.out.println("CartController update");
         if (o instanceof Cart){
             Cart cart = (Cart) o;
             if(cart.isFree()){
