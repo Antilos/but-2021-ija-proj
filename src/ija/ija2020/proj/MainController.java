@@ -2,11 +2,15 @@ package ija.ija2020.proj;
 
 import ija.ija2020.proj.calendar.Calendar;
 import ija.ija2020.proj.calendar.Event;
+<<<<<<< HEAD
 import ija.ija2020.proj.geometry.Drawable;
 import ija.ija2020.proj.store.DropOffPoint;
 import ija.ija2020.proj.store.Goods;
 import ija.ija2020.proj.store.GoodsItem;
 import ija.ija2020.proj.store.GoodsOrder;
+=======
+import ija.ija2020.proj.store.*;
+>>>>>>> fbe5308a228335e6529294d8c864559981e3f7f3
 import ija.ija2020.proj.store.map.StoreMap;
 import ija.ija2020.proj.store.map.StoreNode;
 import ija.ija2020.proj.vehicle.Cart;
@@ -128,6 +132,21 @@ public class MainController extends Application implements Observer{
 
     private void loadShelves(String filename) throws IOException {
         this.map.addShelves(this.dataLoader.loadShelves(filename));
+    }
+
+    private GoodsOrder parseOrder(String str){
+        GoodsOrder order = new GoodsOrder(0);
+        String[] lines = str.split("\n");
+        for(String line : lines){
+            String[] split = line.split(",");
+            order.add(new OrderItem(Integer.parseInt(split[1]), this.goodsTypes.get(split[0])));
+        }
+        return order;
+    }
+
+    private void queueOrder(DropOffPoint dropOffPoint, GoodsOrder order){
+        order.setDropOffPoint(dropOffPoint);
+        this.waitingOrders.add(order);
     }
 
     /**
