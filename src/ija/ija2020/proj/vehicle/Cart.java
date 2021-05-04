@@ -308,4 +308,21 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
         gui.add(rect);
         return gui;
     }
+
+    /**
+     * Gets a dictionary containing info about the content of this cart
+     * @return Content of this shelf in the format <Goods type name, number of items on this shelf>
+     */
+    public Map<String, Integer> getContent(){
+        Map<String, Integer> result = new HashMap<>();
+        for (GoodsItem item : this.items){
+            String name = item.getGoodsType().getName();
+            if (result.containsKey(name)){
+                result.replace(name, result.get(name)+1);
+            }else {
+                result.putIfAbsent(name, 1);
+            }
+        }
+        return result;
+    }
 }
