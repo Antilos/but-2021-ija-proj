@@ -3,36 +3,34 @@ package ija.ija2020.proj.map;
 import ija.ija2020.proj.geometry.Drawable;
 import ija.ija2020.proj.geometry.Targetable;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
 public class GridNode implements Targetable, Drawable {
     private final int x;
     private final int y;
-    private boolean obstructed;
+    private boolean isObstructed;
     private final GridMap parentMap;
 
     public GridNode(int x, int y, GridMap parentMap) {
         this.x = x;
         this.y = y;
         this.parentMap = parentMap;
-        this.obstructed = false;
+        this.isObstructed = false;
     }
 
     public GridNode(int x, int y, GridMap parentMap, boolean isObstructed) {
         this.x = x;
         this.y = y;
         this.parentMap = parentMap;
-        this.obstructed = isObstructed;
+        this.isObstructed = isObstructed;
     }
 
     public boolean isObstructed() {
-        return obstructed;
+        return isObstructed;
     }
 
     @Override
@@ -52,7 +50,7 @@ public class GridNode implements Targetable, Drawable {
     }
 
     public void setObstructed(boolean obstructed) {
-        this.obstructed = obstructed;
+        this.isObstructed = obstructed;
     }
 
     @Override

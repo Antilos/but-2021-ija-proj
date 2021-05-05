@@ -18,7 +18,6 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
@@ -65,8 +64,8 @@ public class MainController extends Application implements Observer{
     private LocalTime time = LocalTime.now();
     private LocalTime endTime = LocalTime.MAX;
 
-    final long normalStepSize = 1; //init step size in seconds
-    long tStep = normalStepSize; //step size in seconds
+    final long NORMAL_STEP_SIZE = 1; //init step size in seconds
+    long tStep = NORMAL_STEP_SIZE; //step size in seconds
     private DropOffPoint defaultDropOffPoint;
 
     @Override
@@ -113,6 +112,10 @@ public class MainController extends Application implements Observer{
         this.initStore("data/map.csv", "data/goods.csv", "data/shelves.csv", "data/defaultDropOffPoint.csv", "data/orders.csv", "data/stocks.csv");
 
         this.cartController = new CartController(DEFAULT_CART_CAPACITY, (StoreNode) this.map.getNode(0, 0));
+    }
+
+    public void setStepSize(long stepSize){
+        this.tStep = stepSize;
     }
 
     public Calendar getCalendar() {
@@ -264,7 +267,7 @@ public class MainController extends Application implements Observer{
                         //System.out.println(String.format("T=%s | Performing action %s", time.toString(), e.getAction().toString()));
                         e.performAction(time);
 
-                        tStep = normalStepSize;
+                        tStep = NORMAL_STEP_SIZE;
                         e = cal.getNextEvent();
                     }
                 }
@@ -283,7 +286,7 @@ public class MainController extends Application implements Observer{
                         interruptedException.printStackTrace();
                     }
 
-                    tStep = normalStepSize;
+                    tStep = NORMAL_STEP_SIZE;
                 }
             }
         }
@@ -328,7 +331,7 @@ public class MainController extends Application implements Observer{
                                 //System.out.println(String.format("T=%s | Performing action %s", time.toString(), e.getAction().toString()));
                                 e.performAction(time);
 
-                                tStep = normalStepSize;
+                                tStep = NORMAL_STEP_SIZE;
                                 e = cal.getNextEvent();
                             }
                         }
@@ -348,7 +351,7 @@ public class MainController extends Application implements Observer{
                                 break;
                             }
 
-                            tStep = normalStepSize;
+                            tStep = NORMAL_STEP_SIZE;
                         }
                     }
                     return null;
