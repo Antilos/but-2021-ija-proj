@@ -322,6 +322,7 @@ public class MainController extends Application implements Observer{
                 protected Void call() throws Exception {
                     Event e;
                     while (time.isBefore(endTime)) {
+                        System.out.println("Calendar Empty");
                         e = cal.getNextEvent();
                         while (e != null) {
                             if (e.getActivationTime().isBefore(endTime)) {
