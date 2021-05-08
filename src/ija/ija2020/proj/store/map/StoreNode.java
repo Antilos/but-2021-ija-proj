@@ -31,7 +31,11 @@ public class StoreNode extends GridNode {
 
     @Override
     public boolean isObstructed() {
-        return shelf != null;
+        return shelf != null ? true : super.isObstructed();
+    }
+
+    public void toggleObstructed(){
+        super.setObstructed(super.isObstructed() ? false : true);
     }
 
     public boolean hasShelf(){
