@@ -109,8 +109,8 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
 
     @Override
     public void moveTo(Targetable target) {
-        pos.observers();
-        pos = (StoreNode) this.map.getNode(target.getX(), target.getY());
+        this.pos.observers();
+        this.pos = (StoreNode) this.map.getNode(target.getX(), target.getY());
     }
 
     @Override
@@ -219,6 +219,7 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
                         this.items = new LinkedList<>();
                         this.isDroppingOff = false;
                         this.isFree = true;
+                        this.curPath = null;
                         this.setChanged();
                         this.notifyObservers();
                         return;
@@ -255,15 +256,25 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
             //if we haven't found any path, just try again with delay
             if(nextNode != null) {
                 t1 = time.plusSeconds((long) (this.getCurNode().distance(nextNode) / this.getSpeed()));
+                System.out.println(String.format("T=%s | Cart %s:(%d, %d) scheduling event to %s: Moving to (%d, %d)",
+                        time.toString(), this.toString(), this.getX(), this.getY(),
+                        t1.toString(), nextNode.getX(), nextNode.getY()
+                ));
+                System.out.println(String.format("DEBUG: curNode(%d, %d), nextNode(%d, %d) delta_t=%d; distance=%d; speed=%d",
+                        this.getCurNode().getX(), this.getCurNode().getY(),
+                        nextNode.getX(), nextNode.getY(),
+                        (long)(this.getCurNode().distance(nextNode) / this.getSpeed()),
+                        (long)this.getCurNode().distance(nextNode),
+                        (long)this.getSpeed()
+                        ));
             }
             else{
                 t1 = time.plusSeconds(START_UP_DELAY);
+                System.out.println(String.format("T=%s | Cart %s:(%d, %d) scheduling event to %s: Waiting",
+                        time.toString(), this.toString(), this.getX(), this.getY(),
+                        t1.toString()
+                ));
             }
-
-            System.out.println(String.format("T=%s | Cart %s:(%d, %d) scheduling event to %s",
-                    time.toString(), this.toString(), this.getX(), this.getY(),
-                    t1.toString()
-            ));
             this.mainController.getCalendar().insertEvent(new Event(t1, 0, this::update));
         }
     }
@@ -365,22 +376,5 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
                 });
         gui.add(rect);
         return gui;
-    }
-
-    /**
-     * Gets a dictionary containing info about the content of this cart
-     * @return Content of this shelf in the format <Goods type name, number of items on this shelf>
-     */
-    public Map<String, Integer> getContent(){
-        Map<String, Integer> result = new HashMap<>();
-        for (GoodsItem item : this.items){
-            String name = item.getGoodsType().getName();
-            if (result.containsKey(name)){
-                result.replace(name, result.get(name)+1);
-            }else {
-                result.putIfAbsent(name, 1);
-            }
-        }
-        return result;
     }
 }
