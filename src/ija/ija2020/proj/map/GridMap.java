@@ -1,5 +1,6 @@
 package ija.ija2020.proj.map;
 
+import ija.ija2020.proj.MainController;
 import ija.ija2020.proj.geometry.Targetable;
 
 import java.util.LinkedList;

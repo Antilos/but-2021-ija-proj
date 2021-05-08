@@ -10,6 +10,8 @@ import ija.ija2020.proj.map.GridNode;
 import ija.ija2020.proj.store.*;
 import ija.ija2020.proj.store.map.StoreMap;
 import ija.ija2020.proj.store.map.StoreNode;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -39,9 +41,11 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
     private Deque<GridNode> curPath = null;
 
     private StoreNode pos;
+    //private StoreNode lastpos;
     private boolean isDroppingOff = false;
     private boolean isFree = true;
 
+    private boolean hover = false;
     /**
      * Creates a new cart with a capacity and speed
      * Should be called from a CartController, otherwise the behaviour is undefined.
@@ -105,6 +109,7 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
 
     @Override
     public void moveTo(Targetable target) {
+        pos.observers();
         pos = (StoreNode) this.map.getNode(target.getX(), target.getY());
     }
 
@@ -297,14 +302,67 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
         return null;
     }
 
+    private void observers(){
+        this.setChanged();
+        this.notifyObservers();
+    }
+
+    @Override
+    public Map<String, Integer> getContent(){
+        Map<String, Integer> result = new HashMap<>();
+        for (GoodsItem item : this.items){
+            String name = item.getGoodsType().getName();
+            if (result.containsKey(name)){
+                result.replace(name, result.get(name)+1);
+            }else {
+                result.putIfAbsent(name, 1);
+            }
+        }
+        return result;
+    }
+
+
+    @Override
+    public boolean isHovered(){
+        if (this.hover == true){
+            return true;
+        }
+        return false;
+    }
     @Override
     public List<Shape> getGUI() {
+
         List<Shape> gui = new ArrayList<>();
 
+        //lastpos.observers();
+
         Rectangle rect = new Rectangle(pos.getX()*100,  pos.getY()*100, 100, 100);
-        rect.setFill(Color.RED);
+        if (hover == true){
+            rect.setFill(Color.BLACK);
+        } else {
+            rect.setFill(Color.RED);
+        }
+
         rect.setStroke(Color.BLACK);
         rect.setStrokeWidth(2);
+        rect.addEventHandler(MouseEvent.MOUSE_ENTERED,
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent e) {
+                        rect.setFill(Color.BLACK);
+                        hover = true;
+                        observers();
+                    }
+                });
+        rect.addEventHandler(MouseEvent.MOUSE_EXITED,
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent e) {
+                        rect.setFill(Color.RED);
+                        hover = false;
+                        observers();
+                    }
+                });
         gui.add(rect);
         return gui;
     }

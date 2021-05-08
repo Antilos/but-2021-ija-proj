@@ -1,5 +1,6 @@
 package ija.ija2020.proj.store.map;
 
+import ija.ija2020.proj.MainController;
 import ija.ija2020.proj.geometry.Rectangle;
 import ija.ija2020.proj.map.GridMap;
 import ija.ija2020.proj.store.Goods;
@@ -15,7 +16,8 @@ public class StoreMap extends GridMap {
         super(height, width);
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                this.grid[i + j * width] = new StoreNode(i, j, this);
+                StoreNode storeNode = new StoreNode(i, j, this);
+                this.grid[i + j * width] = storeNode;
             }
         }
     }

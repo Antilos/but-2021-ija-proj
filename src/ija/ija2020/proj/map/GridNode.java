@@ -11,7 +11,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class GridNode implements Targetable, Drawable {
+public class GridNode extends Observable implements Targetable, Drawable {
     private final int x;
     private final int y;
     private boolean obstructed;
@@ -220,14 +220,17 @@ public class GridNode implements Targetable, Drawable {
     }
 
     @Override
-    public List<Shape> getGUI() {
-        List<Shape> gui = new ArrayList<>();
+    public Map<String, Integer>  getContent() {
+        return null;
+    }
 
-        Rectangle rect = new Rectangle(x*100,  y*100, 100, 100);
-        rect.setFill(Color.WHITE);
-        rect.setStroke(Color.BLACK);
-        rect.setStrokeWidth(2);
-        gui.add(rect);
-        return gui;
+    @Override
+    public boolean isHovered(){
+        return false;
+    }
+    @Override
+    public List<Shape> getGUI() {
+
+        return null;
     }
 }

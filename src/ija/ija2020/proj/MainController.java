@@ -3,6 +3,7 @@ package ija.ija2020.proj;
 import ija.ija2020.proj.calendar.Calendar;
 import ija.ija2020.proj.calendar.Event;
 import ija.ija2020.proj.geometry.Drawable;
+import ija.ija2020.proj.map.GridNode;
 import ija.ija2020.proj.store.DropOffPoint;
 import ija.ija2020.proj.store.Goods;
 import ija.ija2020.proj.store.GoodsItem;
@@ -41,14 +42,6 @@ public class MainController extends Application implements Observer{
     private CartController cartController;
     private DataLoader dataLoader;
 
-    public LayoutController getLayoutcontroller() {
-        return layoutcontroller;
-    }
-
-    public void setLayoutcontroller(LayoutController layoutcontroller) {
-        this.layoutcontroller = layoutcontroller;
-    }
-
     //private List<Shape> elements;
     private LayoutController layoutcontroller;
 
@@ -69,6 +62,14 @@ public class MainController extends Application implements Observer{
     long tStep = normalStepSize; //step size in seconds
     private DropOffPoint defaultDropOffPoint;
 
+    public LayoutController getLayoutcontroller() {
+        return layoutcontroller;
+    }
+
+    public void setLayoutcontroller(LayoutController layoutcontroller) {
+        this.layoutcontroller = layoutcontroller;
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         //observe orders to see when they become fulfilled
@@ -81,9 +82,16 @@ public class MainController extends Application implements Observer{
         }
         if (o instanceof Cart){
             List<Drawable> elements = new ArrayList<>();
-            System.out.println("update vehicles");
             Cart cart = (Cart) o;
             elements.add(cart);
+            Platform.runLater(()-> {
+                MainController.getInstance().getLayoutcontroller().setElements(elements);
+            });
+        }
+        if (o instanceof StoreNode){
+            List<Drawable> elements = new ArrayList<>();
+            StoreNode storeNode = (StoreNode) o;
+            elements.add(storeNode);
             Platform.runLater(()-> {
                 MainController.getInstance().getLayoutcontroller().setElements(elements);
             });
@@ -113,6 +121,12 @@ public class MainController extends Application implements Observer{
         this.initStore("data/map.csv", "data/goods.csv", "data/shelves.csv", "data/defaultDropOffPoint.csv", "data/orders.csv", "data/stocks.csv");
 
         this.cartController = new CartController(DEFAULT_CART_CAPACITY, (StoreNode) this.map.getNode(0, 0));
+        //register nodes to observer
+        for(int i = 0; i < this.getMap().getWidth(); i++){
+            for(int j = 0; j < this.getMap().getHeight(); j++){
+                this.registerGridNode(this.getMap().getNode(i, j));
+            }
+        }
     }
 
     public Calendar getCalendar() {
@@ -139,7 +153,7 @@ public class MainController extends Application implements Observer{
         this.map.addShelves(this.dataLoader.loadShelves(filename));
     }
 
-    private GoodsOrder parseOrder(String str){
+    public GoodsOrder parseOrder(String str){
         GoodsOrder order = new GoodsOrder(0);
         String[] lines = str.split("\n");
         for(String line : lines){
@@ -149,9 +163,10 @@ public class MainController extends Application implements Observer{
         return order;
     }
 
-    private void queueOrder(DropOffPoint dropOffPoint, GoodsOrder order){
-        order.setDropOffPoint(dropOffPoint);
+    public void queueOrder(GoodsOrder order){
+        order.setDropOffPoint(defaultDropOffPoint);
         this.waitingOrders.add(order);
+        this.getCalendar().insertEvent(new Event(this.getTime().plusSeconds(MainController.ORDER_ACCEPT_DELAY), 0, this::processOrderAction));
     }
 
     /**
@@ -229,7 +244,7 @@ public class MainController extends Application implements Observer{
                 break;
             }
         }
-        //TODO:Try to plan this outside of this event (like when we load new orders from somewhere)
+
         //this.getCalendar().insertEvent(new Event(this.getTime().plusSeconds(MainController.ORDER_ACCEPT_DELAY), 0, this::processOrderAction));
     }
 
@@ -388,6 +403,10 @@ public class MainController extends Application implements Observer{
 
     public void registerCart(Cart cart){
         cart.addObserver(this);
+    }
+
+    public void registerGridNode(GridNode gridNode){
+        gridNode.addObserver(this);
     }
 
     @Override
