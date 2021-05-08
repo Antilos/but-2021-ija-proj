@@ -11,6 +11,7 @@ import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class LayoutController {
 
@@ -50,18 +51,20 @@ public class LayoutController {
         for (Drawable drawable : elements){
             mainMap.getChildren().addAll(drawable.getGUI());
             if( drawable.isHovered()){
-                if(drawable.getContent() != null){
+                Map<String, Integer> content = drawable.getContent();
+                if(content != null){
                     String s = "";
-                    for (String key: drawable.getContent().keySet()) {
+
+                    for (String key: content.keySet()) {
                         s += key;
                         s += " ";
-                        s += drawable.getContent().get(key);
+                        s += content.get(key);
                         s += "\n";
                     }
-                    if ( drawable.getContent().size() == 0){
-                        content.setText("empty");
+                    if ( content.size() == 0){
+                        this.content.setText("empty");
                     }else {
-                        content.setText(s);
+                        this.content.setText(s);
                     }
                 }
             }else{
