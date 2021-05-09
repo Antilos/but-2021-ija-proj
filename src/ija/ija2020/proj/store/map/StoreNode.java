@@ -75,7 +75,6 @@ public class StoreNode extends GridNode {
 
     @Override
     public List<Shape> getGUI() {
-        StoreNode tmpRef = this;
         List<Shape> gui = new ArrayList<>();
 
         Rectangle rect = new Rectangle(getX()*100,  getY()*100, 100, 100);
@@ -124,23 +123,8 @@ public class StoreNode extends GridNode {
                     new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent e) {
-                            //StoreNode node = (StoreNode) getParentMap().getNode((int)(e.getX()/100), (int)(e.getY()/100));
                             toggleObstructed();
                             rect.setFill(isObstructed() ? Color.YELLOW : Color.WHITE );
-//                            blabla();
-//                            if(isObstructed() != true){
-//                                System.out.println("setting obstruction");
-//                                rect.setFill(Color.YELLOW);
-//                                //toggleObstructed();
-//                                tmpRef.obstructed = true;
-//                                System.out.println(String.format("obstructed=%b", isObstructed()));
-//                            }else if (isObstructed() == true){
-//                                System.out.println("deletinf obstruction");
-//                                rect.setFill(Color.WHITE);
-//                                //toggleObstructed();
-//                                tmpRef.obstructed = false;
-//                            }
-
                         }
                     });
             gui.add(rect);

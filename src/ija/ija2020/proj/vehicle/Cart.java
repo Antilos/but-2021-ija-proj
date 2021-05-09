@@ -112,6 +112,7 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
     public void moveTo(Targetable target) {
         this.pos.observers();
         this.pos = (StoreNode) this.map.getNode(target.getX(), target.getY());
+        observers();
     }
 
     @Override
@@ -353,7 +354,7 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
 
     private List<Shape> getPathGui(){
 
-        Deque<GridNode> temppath = this.curPath;
+        Deque<GridNode> temppath = new ArrayDeque<>();
         List<Shape> result = new ArrayList<>();
         GridNode actnode = temppath.getFirst();
         GridNode nextnode;
