@@ -349,7 +349,7 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
 
     private List<Shape> getPathGui(){
 
-        Deque<GridNode> temppath = this.curPath;
+        Deque<GridNode> temppath = new ArrayDeque<>();
         List<Shape> result = new ArrayList<>();
         GridNode actnode = temppath.getFirst();
         GridNode nextnode;

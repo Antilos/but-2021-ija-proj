@@ -17,9 +17,9 @@
    <right>
       <AnchorPane prefHeight="338.0" prefWidth="149.0" BorderPane.alignment="CENTER">
          <children>
-            <TextArea fx:id="content" editable="false" layoutX="21.0" prefHeight="203.0" prefWidth="124.0" />
-            <TextArea fx:id="orderfield" layoutX="2.0" layoutY="237.0" prefHeight="180.0" prefWidth="145.0" />
-            <Button layoutX="42.0" layoutY="431.0" mnemonicParsing="false" onMouseClicked="#order" text="Order" />
+            <TextArea fx:id="content" editable="false" layoutX="21.0" layoutY="7.0" prefHeight="200.0" prefWidth="120.0" />
+            <TextArea fx:id="orderfield" layoutX="20.0" layoutY="221.0" prefHeight="200.0" prefWidth="120.0" />
+            <Button layoutX="43.0" layoutY="432.0" mnemonicParsing="false" onMouseClicked="#order" prefHeight="31.0" prefWidth="77.0" text="Order" />
          </children></AnchorPane>
    </right>
 </BorderPane>

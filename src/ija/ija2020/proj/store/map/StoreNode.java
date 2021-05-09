@@ -121,14 +121,16 @@ public class StoreNode extends GridNode {
                     new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent e) {
-                            if(isObstructed() != true){
+
+                            if(isObstructed() == false){
                                 System.out.println("setting obstruction");
                                 rect.setFill(Color.YELLOW);
-                                toggleObstructed();
+                                StoreNode.this.toggleObstructed();
                             }else if (isObstructed() == true){
                                 System.out.println("deletinf obstruction");
                                 rect.setFill(Color.WHITE);
-                                toggleObstructed();
+
+                                StoreNode.this.toggleObstructed();
                             }
 
                         }
