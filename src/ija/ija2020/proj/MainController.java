@@ -321,10 +321,16 @@ public class MainController extends Application implements Observer{
                 @Override
                 protected Void call() throws Exception {
                     Event e;
+                    boolean calendarEmpty = false;
                     while (time.isBefore(endTime)) {
-                        System.out.println("Calendar Empty");
+                        if(calendarEmpty == true) {
+                            System.out.println("Calendar Empty");
+                            calendarEmpty = false;
+                        }
+                        Thread.sleep(tStep);
                         e = cal.getNextEvent();
                         while (e != null) {
+                            calendarEmpty = true;
                             if (e.getActivationTime().isBefore(endTime)) {
                                 while(!time.plusSeconds(tStep).isAfter(e.getActivationTime()) && !time.plusSeconds(tStep).isAfter(endTime)) {
                                     if (time.plusSeconds(tStep).isAfter(e.getActivationTime())) {

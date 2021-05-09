@@ -2,8 +2,6 @@ package ija.ija2020.proj.map;
 
 import ija.ija2020.proj.geometry.Drawable;
 import ija.ija2020.proj.geometry.Targetable;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
 import java.util.*;
@@ -12,25 +10,25 @@ import java.util.List;
 public class GridNode extends Observable implements Targetable, Drawable {
     private final int x;
     private final int y;
-    private boolean isObstructed;
+    protected boolean obstructed;
     private final GridMap parentMap;
 
     public GridNode(int x, int y, GridMap parentMap) {
         this.x = x;
         this.y = y;
         this.parentMap = parentMap;
-        this.isObstructed = false;
+        this.obstructed = false;
     }
 
-    public GridNode(int x, int y, GridMap parentMap, boolean isObstructed) {
+    public GridNode(int x, int y, GridMap parentMap, boolean obstructed) {
         this.x = x;
         this.y = y;
         this.parentMap = parentMap;
-        this.isObstructed = isObstructed;
+        this.obstructed = obstructed;
     }
 
     public boolean isObstructed() {
-        return isObstructed;
+        return obstructed;
     }
 
     @Override
@@ -50,7 +48,7 @@ public class GridNode extends Observable implements Targetable, Drawable {
     }
 
     public void setObstructed(boolean obstructed) {
-        this.isObstructed = obstructed;
+        this.obstructed = obstructed;
     }
 
     @Override
@@ -151,7 +149,8 @@ public class GridNode extends Observable implements Targetable, Drawable {
                 if (mazeNeigh.visited){
                     continue;
                 }
-                if (neigh == end) {
+                //if (neigh == end) {
+                if (neigh.x == end.getX() && neigh.y == end.getY()){
                     mazeNeigh.parent = node;
                     endMazeNode = mazeNeigh;
                     break;

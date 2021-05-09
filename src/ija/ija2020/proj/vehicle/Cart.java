@@ -188,6 +188,10 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
 
                 GridNode nextNode = this.curPath.pollLast();
                 if (nextNode != null) { //opposite should only happen if the order was empty or if the shelf is adjecent ot us
+                    System.out.println(String.format("T=%s | Cart %s:(%d, %d) About to move to (%d, %d). Is it obstructed? %b",
+                            time.toString(), this.toString(), this.getX(), this.getY(),
+                            nextNode.getX(), nextNode.getY(), nextNode.isObstructed()
+                    ));
                     this.moveTo(nextNode); //move to the next node on the path
                 }
             } else {
