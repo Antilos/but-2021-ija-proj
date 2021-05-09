@@ -31,6 +31,10 @@ public class GridNode extends Observable implements Targetable, Drawable {
         return obstructed;
     }
 
+    public GridMap getParentMap() {
+        return parentMap;
+    }
+
     @Override
     public int getX() {
         return x;
