@@ -13,6 +13,7 @@ import ija.ija2020.proj.store.map.StoreNode;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.util.Pair;
@@ -109,8 +110,8 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
 
     @Override
     public void moveTo(Targetable target) {
-        pos.observers();
-        pos = (StoreNode) this.map.getNode(target.getX(), target.getY());
+        this.pos.observers();
+        this.pos = (StoreNode) this.map.getNode(target.getX(), target.getY());
     }
 
     @Override
@@ -219,6 +220,7 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
                         this.items = new LinkedList<>();
                         this.isDroppingOff = false;
                         this.isFree = true;
+                        this.curPath = null;
                         this.setChanged();
                         this.notifyObservers();
                         return;
@@ -255,15 +257,25 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
             //if we haven't found any path, just try again with delay
             if(nextNode != null) {
                 t1 = time.plusSeconds((long) (this.getCurNode().distance(nextNode) / this.getSpeed()));
+                System.out.println(String.format("T=%s | Cart %s:(%d, %d) scheduling event to %s: Moving to (%d, %d)",
+                        time.toString(), this.toString(), this.getX(), this.getY(),
+                        t1.toString(), nextNode.getX(), nextNode.getY()
+                ));
+                System.out.println(String.format("DEBUG: curNode(%d, %d), nextNode(%d, %d) delta_t=%d; distance=%d; speed=%d",
+                        this.getCurNode().getX(), this.getCurNode().getY(),
+                        nextNode.getX(), nextNode.getY(),
+                        (long)(this.getCurNode().distance(nextNode) / this.getSpeed()),
+                        (long)this.getCurNode().distance(nextNode),
+                        (long)this.getSpeed()
+                        ));
             }
             else{
                 t1 = time.plusSeconds(START_UP_DELAY);
+                System.out.println(String.format("T=%s | Cart %s:(%d, %d) scheduling event to %s: Waiting",
+                        time.toString(), this.toString(), this.getX(), this.getY(),
+                        t1.toString()
+                ));
             }
-
-            System.out.println(String.format("T=%s | Cart %s:(%d, %d) scheduling event to %s",
-                    time.toString(), this.toString(), this.getX(), this.getY(),
-                    t1.toString()
-            ));
             this.mainController.getCalendar().insertEvent(new Event(t1, 0, this::update));
         }
     }
@@ -334,6 +346,28 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
         }
         return false;
     }
+
+    private List<Shape> getPathGui(){
+
+        Deque<GridNode> temppath = this.curPath;
+        List<Shape> result = new ArrayList<>();
+        GridNode actnode = temppath.getFirst();
+        GridNode nextnode;
+        for(int i = 0; i < temppath.size() - 1; i++){
+            System.out.println(actnode.getX() +  "   "+actnode.getY()  );
+            nextnode = temppath.getFirst();
+            Line line = new Line();
+            line.setStartX(actnode.getX()*100);
+            line.setStartY(actnode.getY()*100);
+            line.setEndX(nextnode.getX()*100);
+            line.setEndY(nextnode.getY()*100);
+            line.setStrokeWidth(10);
+            result.add(line);
+            actnode = nextnode;
+        }
+        return result;
+    }
+
     @Override
     public List<Shape> getGUI() {
 
@@ -344,6 +378,9 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
         Rectangle rect = new Rectangle(pos.getX()*100,  pos.getY()*100, 100, 100);
         if (hover == true){
             rect.setFill(Color.BLACK);
+            //if(getPathGui() != null){
+            //    gui.addAll(getPathGui());
+            //}
         } else {
             rect.setFill(Color.RED);
         }
@@ -356,6 +393,10 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
                     public void handle(MouseEvent e) {
                         rect.setFill(Color.BLACK);
                         hover = true;
+                        //if(getPathGui() != null){
+                        //    gui.addAll(getPathGui());
+                        //}
+
                         observers();
                     }
                 });
@@ -371,6 +412,4 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
         gui.add(rect);
         return gui;
     }
-
-
 }

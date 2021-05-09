@@ -51,8 +51,8 @@ public class MainController extends Application implements Observer{
     private List<GoodsOrder> activeOrders;
     private List<GoodsOrder> fulfilledOrders;
 
-    private final int DEFAULT_CART_CAPACITY = 20;
-    private static final int ORDER_ACCEPT_DELAY = 1;
+    public final int DEFAULT_CART_CAPACITY = 20;
+    public static final int ORDER_ACCEPT_DELAY = 1;
 
     private LocalTime time = LocalTime.now();
     private LocalTime endTime = LocalTime.MAX;
@@ -170,6 +170,9 @@ public class MainController extends Application implements Observer{
         order.setDropOffPoint(defaultDropOffPoint);
         this.waitingOrders.add(order);
         this.getCalendar().insertEvent(new Event(this.getTime().plusSeconds(MainController.ORDER_ACCEPT_DELAY), 0, this::processOrderAction));
+        System.out.println(String.format("T=%s | scheduling order processing event to %s",
+                this.getTime().toString(), this.getTime().plusSeconds(MainController.ORDER_ACCEPT_DELAY)
+        ));
     }
 
     /**
@@ -235,13 +238,15 @@ public class MainController extends Application implements Observer{
      * @param t time
      */
     public void processOrderAction(LocalTime t){
+        System.out.println(String.format("T=%s | Processing Orders", t.toString()));
         GoodsOrder order;
 
         //try to process as many orders as possible at once
         while((order = this.waitingOrders.peek()) != null) {
-            if (this.cartController.acceptOrder(order) != null) {
-                System.out.println(String.format("T=%s | Accepting order %s", t.toString(), order.toString()));
-                    this.activeOrders.add(this.waitingOrders.poll()); //mark order as active if it was accepted
+            Cart cart = this.cartController.acceptOrder(order);
+            if (cart != null) {
+                System.out.println(String.format("T=%s | Cart %s accepting order %s", t.toString(), cart.toString(), order.toString()));
+                this.activeOrders.add(this.waitingOrders.poll()); //mark order as active if it was accepted
             }else{
                 //no carts available at this time
                 break;
@@ -279,7 +284,7 @@ public class MainController extends Application implements Observer{
                         }
 
                         //perform event
-                        //System.out.println(String.format("T=%s | Performing action %s", time.toString(), e.getAction().toString()));
+                        System.out.println(String.format("--T=%s | Performing action %s", time.toString(), e.getAction().toString()));
                         e.performAction(time);
 
                         tStep = NORMAL_STEP_SIZE;
@@ -287,22 +292,22 @@ public class MainController extends Application implements Observer{
                     }
                 }
 
-                while (time.isBefore(endTime)) {
-                    if (time.plusSeconds(tStep).isAfter(endTime)) {
-                        tStep = endTime.until(time, ChronoUnit.SECONDS);
-                    }
-                    //integration or some shit
-//                System.out.println("T=" + t + " | Cart Position: (" + cart.getX() + ", " + cart.getY() + ")");
-                    time = time.plusSeconds(tStep);
-
-                    try {
-                        this.sleep(tStep);
-                    } catch (InterruptedException interruptedException) {
-                        interruptedException.printStackTrace();
-                    }
-
-                    tStep = NORMAL_STEP_SIZE;
-                }
+//                while (time.isBefore(endTime)) {
+//                    if (time.plusSeconds(tStep).isAfter(endTime)) {
+//                        tStep = endTime.until(time, ChronoUnit.SECONDS);
+//                    }
+//                    //integration or some shit
+////                System.out.println("T=" + t + " | Cart Position: (" + cart.getX() + ", " + cart.getY() + ")");
+//                    time = time.plusSeconds(tStep);
+//
+//                    try {
+//                        this.sleep(tStep);
+//                    } catch (InterruptedException interruptedException) {
+//                        interruptedException.printStackTrace();
+//                    }
+//
+//                    tStep = NORMAL_STEP_SIZE;
+//                }
             }
         }
     };
@@ -317,6 +322,7 @@ public class MainController extends Application implements Observer{
                 protected Void call() throws Exception {
                     Event e;
                     while (time.isBefore(endTime)) {
+                        System.out.println("Calendar Empty");
                         e = cal.getNextEvent();
                         while (e != null) {
                             if (e.getActivationTime().isBefore(endTime)) {
@@ -351,23 +357,23 @@ public class MainController extends Application implements Observer{
                             }
                         }
 
-                        while (time.isBefore(endTime)) {
-                            if (time.plusSeconds(tStep).isAfter(endTime)) {
-                                tStep = endTime.until(time, ChronoUnit.SECONDS);
-                            }
-                            //integration or some shit
-//                System.out.println("T=" + t + " | Cart Position: (" + cart.getX() + ", " + cart.getY() + ")");
-                            time = time.plusSeconds(tStep);
-
-                            try {
-                                Thread.sleep(tStep*1000);
-                            } catch (InterruptedException interruptedException) {
-                                interruptedException.printStackTrace();
-                                break;
-                            }
-
-                            tStep = NORMAL_STEP_SIZE;
-                        }
+//                        while (time.isBefore(endTime)) {
+//                            if (time.plusSeconds(tStep).isAfter(endTime)) {
+//                                tStep = endTime.until(time, ChronoUnit.SECONDS);
+//                            }
+//                            //integration or some shit
+////                System.out.println("T=" + t + " | Cart Position: (" + cart.getX() + ", " + cart.getY() + ")");
+//                            time = time.plusSeconds(tStep);
+//
+//                            try {
+//                                Thread.sleep(tStep*1000);
+//                            } catch (InterruptedException interruptedException) {
+//                                interruptedException.printStackTrace();
+//                                break;
+//                            }
+//
+//                            tStep = NORMAL_STEP_SIZE;
+//                        }
                     }
                     return null;
                 }

@@ -63,6 +63,8 @@ public class GoodsShelf implements Stockable{
         if(tmp != null) {
             if (tmp.remove(item)){
                 destination.stockItem(item);
+                System.out.println("Removing item " + item.toString() + " of type " + item.getGoodsType().getName() + " from shelf " + this.name);
+                System.out.println("There is " + goodsDict.size() + " pieces remaining of " + item.getGoodsType().getName() + " in shelf " + this.name);
                 return item;
             }else{
                 return null;
@@ -78,6 +80,8 @@ public class GoodsShelf implements Stockable{
             if (!tmp.isEmpty()) {
                 GoodsItem result = tmp.remove(0);
                 destination.stockItem(result);
+                System.out.println("Removing item " + result.toString() + " of type " + result.getGoodsType().getName() + " from shelf " + this.name);
+                System.out.println("There is " + this.size(goods) + " pieces remaining of " + result.getGoodsType().getName() + " in shelf " + this.name);
                 return result;
             }
         }
@@ -89,6 +93,8 @@ public class GoodsShelf implements Stockable{
      * @return Content of this shelf in the format <Goods type name, number of items on this shelf>
      */
     public Map<String, Integer> getContent(){
+        //System.out.println("Removing item " + result.toString() + " of type " + result.getGoodsType().getName() + " from shelf " + this.name);
+        //System.out.println("There is " + this.size(goods) + " pieces remaining of " + result.getGoodsType().getName() + " in shelf " + this.name);
         Map<String, Integer> result = new HashMap<>();
         for (Map.Entry<Goods, LinkedList<GoodsItem>> entry : this.goodsDict.entrySet()){
             result.putIfAbsent(entry.getKey().getName(), entry.getValue().size());

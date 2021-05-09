@@ -9,6 +9,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +78,7 @@ public class StoreNode extends GridNode {
         Rectangle rect = new Rectangle(getX()*100,  getY()*100, 100, 100);
         rect.setStroke(Color.BLACK);
         rect.setStrokeWidth(2);
+
         if( this.hasShelf() == true){
 
             if (hover == true){
@@ -101,17 +105,37 @@ public class StoreNode extends GridNode {
                             observers();
                         }
                     });
+            Text t = new Text(getX()*100,getY()*100+100,shelf.getName());
+            t.setFont(new Font(50));
+            t.setTextAlignment(TextAlignment.JUSTIFY);
+            t.setText(shelf.getName());
+            gui.add(rect);
+            gui.add(t);
         } else {
-            rect.setFill(Color.WHITE);
-            rect.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    rect.setFill(Color.YELLOW);
-                    setObstructed(true);
-                }
-            });
+
+            rect.setFill(Color.YELLOW);
+            if(isObstructed() != true){
+                rect.setFill(Color.WHITE);
+            }
+            rect.addEventHandler(MouseEvent.MOUSE_CLICKED,
+                    new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent e) {
+                            if(isObstructed() != true){
+                                System.out.println("setting obstruction");
+                                rect.setFill(Color.YELLOW);
+                                toggleObstructed();
+                            }else if (isObstructed() == true){
+                                System.out.println("deletinf obstruction");
+                                rect.setFill(Color.WHITE);
+                                toggleObstructed();
+                            }
+
+                        }
+                    });
+            gui.add(rect);
         }
-        gui.add(rect);
+
         return gui;
     }
 

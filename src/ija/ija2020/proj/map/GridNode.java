@@ -46,7 +46,7 @@ public class GridNode extends Observable implements Targetable, Drawable {
     @Override
     public int distance(Targetable target) {
         //Manhattan Distance
-        return Math.abs(target.getX() - this.x) + Math.abs(target.getY() - this.x);
+        return Math.abs(target.getX() - this.x) + Math.abs(target.getY() - this.y);
     }
 
     public void setObstructed(boolean obstructed) {

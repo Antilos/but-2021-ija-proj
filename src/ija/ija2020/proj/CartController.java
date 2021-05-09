@@ -3,6 +3,7 @@ package ija.ija2020.proj;
 import ija.ija2020.proj.store.GoodsOrder;
 import ija.ija2020.proj.store.map.StoreNode;
 import ija.ija2020.proj.vehicle.Cart;
+import ija.ija2020.proj.calendar.Event;
 
 import java.awt.*;
 import java.util.*;
@@ -72,8 +73,9 @@ public class CartController implements Observer {
             if(cart.isFree()){
                 this.activeCarts.remove(cart);
                 this.freeCarts.add(cart);
+                MainController mainController = MainController.getInstance();
+                mainController.getCalendar().insertEvent(new Event(mainController.getTime().plusSeconds(MainController.ORDER_ACCEPT_DELAY), 0, mainController::processOrderAction));
             }
-
         }
     }
 }
