@@ -66,7 +66,8 @@ public class GridMap {
         }
     }
 
-    private final int[][] NEIGHBOUR_MODS = {{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1},{0,1}};
+//    private final int[][] NEIGHBOUR_MODS = {{1,1},{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1},{0,1}};
+    private final int[][] NEIGHBOUR_MODS = {{1,0},{0,-1},{-1,0},{0,1}};
 
     /**
      * Get a list of nodes adjacent to the specified position that are not obstructed
@@ -76,11 +77,11 @@ public class GridMap {
      */
     public List<GridNode> getUnobstructedNeighbours(int x, int y){
         List<GridNode> result = new LinkedList<GridNode>();
-
+        //System.out.println(String.format("+Node(%d,%d), neigh:{"));
         for(int[] mod : NEIGHBOUR_MODS){
             int x1 = x + mod[0];
             int y1 = y + mod[1];
-            if(x1 < 0 || y1 < 0){
+            if(x1 < 0 || y1 < 0 || x1 > this.width || y1 > this.height){
                 continue;
             }
             GridNode neigh = getNode(x1, y1);

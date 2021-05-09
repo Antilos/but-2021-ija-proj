@@ -1,7 +1,5 @@
 package ija.ija2020.proj.store.map;
 
-import ija.ija2020.proj.geometry.Drawable;
-import ija.ija2020.proj.map.GridMap;
 import ija.ija2020.proj.map.GridNode;
 import ija.ija2020.proj.store.GoodsShelf;
 import javafx.event.EventHandler;
@@ -34,11 +32,11 @@ public class StoreNode extends GridNode {
 
     @Override
     public boolean isObstructed() {
-        return shelf != null ? true : super.isObstructed();
+        return shelf != null ? true : this.obstructed;
     }
 
     public void toggleObstructed(){
-        super.setObstructed(super.isObstructed() ? false : true);
+        this.obstructed = this.obstructed ? false : true;
     }
 
     public boolean hasShelf(){
@@ -61,6 +59,10 @@ public class StoreNode extends GridNode {
     public void observers(){
         this.setChanged();
         this.notifyObservers();
+    }
+    
+    public void blabla(){
+        System.out.println(String.format("StoreNode(%d,%d) BLA BLA", this.getX(), this.getY()));
     }
 
     @Override
@@ -121,15 +123,22 @@ public class StoreNode extends GridNode {
                     new EventHandler<MouseEvent>() {
                         @Override
                         public void handle(MouseEvent e) {
-                            if(isObstructed() != true){
-                                System.out.println("setting obstruction");
-                                rect.setFill(Color.YELLOW);
-                                toggleObstructed();
-                            }else if (isObstructed() == true){
-                                System.out.println("deletinf obstruction");
-                                rect.setFill(Color.WHITE);
-                                toggleObstructed();
-                            }
+                            toggleObstructed();
+                            rect.setFill(isObstructed() ? Color.YELLOW : Color.WHITE );
+//                            blabla();
+//                            if(isObstructed() != true){
+//                                System.out.println("setting obstruction");
+//                                rect.setFill(Color.YELLOW);
+//                                //toggleObstructed();
+////                                this.obstructed = true;
+////                                this.shelf;
+//                                System.out.println(String.format("obstructed=%b", isObstructed()));
+//                            }else if (isObstructed() == true){
+//                                System.out.println("deletinf obstruction");
+//                                rect.setFill(Color.WHITE);
+//                                //toggleObstructed();
+////                                this.obstructed = false;
+//                            }
 
                         }
                     });
