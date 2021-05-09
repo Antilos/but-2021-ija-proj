@@ -112,6 +112,7 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
     public void moveTo(Targetable target) {
         this.pos.observers();
         this.pos = (StoreNode) this.map.getNode(target.getX(), target.getY());
+        observers();
     }
 
     @Override

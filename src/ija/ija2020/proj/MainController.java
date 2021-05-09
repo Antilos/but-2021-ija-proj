@@ -124,10 +124,21 @@ public class MainController extends Application implements Observer{
         for(int i = 0; i < this.getMap().getWidth(); i++){
             for(int j = 0; j < this.getMap().getHeight(); j++){
                 this.registerGridNode(this.getMap().getNode(i, j));
+
             }
         }
     }
 
+    private void debugobstructed(){
+        for(int i = 0; i < this.getMap().getWidth(); i++){
+            for(int j = 0; j < this.getMap().getHeight(); j++){
+                if (this.getMap().getNode(i,j).isObstructed() == true){
+                    System.out.println("obstructed "+ i + " " + j);
+                }
+
+            }
+        }
+    }
     public void setStepSize(long stepSize){
         this.tStep = stepSize;
     }
@@ -323,6 +334,7 @@ public class MainController extends Application implements Observer{
                     Event e;
                     boolean calendarEmpty = false;
                     while (time.isBefore(endTime)) {
+
                         if(calendarEmpty == true) {
                             System.out.println("Calendar Empty");
                             calendarEmpty = false;
@@ -330,6 +342,7 @@ public class MainController extends Application implements Observer{
                         Thread.sleep(tStep);
                         e = cal.getNextEvent();
                         while (e != null) {
+                            debugobstructed();
                             calendarEmpty = true;
                             if (e.getActivationTime().isBefore(endTime)) {
                                 while(!time.plusSeconds(tStep).isAfter(e.getActivationTime()) && !time.plusSeconds(tStep).isAfter(endTime)) {

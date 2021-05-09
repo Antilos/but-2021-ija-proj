@@ -125,7 +125,6 @@ public class StoreNode extends GridNode {
                         public void handle(MouseEvent e) {
                             toggleObstructed();
                             rect.setFill(isObstructed() ? Color.YELLOW : Color.WHITE );
-
                         }
                     });
             gui.add(rect);
