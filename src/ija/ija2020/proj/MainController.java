@@ -130,13 +130,18 @@ public class MainController extends Application implements Observer{
     }
 
     private void debugobstructed(){
+        boolean onlyShelves = true;
         for(int i = 0; i < this.getMap().getWidth(); i++){
-            for(int j = 0; j < this.getMap().getHeight(); j++){
-                if (this.getMap().getNode(i,j).isObstructed() == true){
-                    System.out.println("obstructed "+ i + " " + j);
+            for(int j = 0; j < this.getMap().getHeight(); j++) {
+                StoreNode node = (StoreNode) this.getMap().getNode(i, j);
+                if (node.isObstructed() == true && node.getShelf() == null) {
+                    System.out.println("+obstructed " + i + " " + j);
+                    onlyShelves = false;
                 }
-
             }
+        }
+        if(onlyShelves){
+            System.out.println("+Only shelves are obstructed");
         }
     }
     public void setStepSize(long stepSize){
@@ -339,6 +344,7 @@ public class MainController extends Application implements Observer{
                             System.out.println("Calendar Empty");
                             calendarEmpty = false;
                         }
+                        debugobstructed();
                         Thread.sleep(tStep);
                         e = cal.getNextEvent();
                         while (e != null) {
@@ -458,8 +464,9 @@ public class MainController extends Application implements Observer{
 
         List<Drawable> elements = new ArrayList<>();
 
-        for(int i = 0; i < map.getHeight(); i++){
-            for(int j = 0; j < map.getWidth(); j++){
+        final StoreMap map = mainController.getMap();
+        for(int i = 0; i < map.getWidth(); i++){
+            for(int j = 0; j < map.getHeight(); j++){
                 elements.add(map.getNode(i,j));
             }
         }

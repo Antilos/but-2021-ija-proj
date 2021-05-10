@@ -47,6 +47,8 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
     private boolean isFree = true;
 
     private boolean hover = false;
+    private GridNode targetNode;
+
     /**
      * Creates a new cart with a capacity and speed
      * Should be called from a CartController, otherwise the behaviour is undefined.
@@ -142,6 +144,11 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
         ).getClosestUnobstructedAdjacent(this.getCurNode());
 
         this.curPath = this.getCurNode().getPathToNodeOnGrid(this.map, nextNode);
+
+        System.out.println(String.format("T=%s | Cart %s:(%d, %d) Plotting path to (%d, %d)",
+                "x", this.toString(), this.getX(), this.getY(),
+                nextNode.getX(), nextNode.getY()
+        ));
     }
 
     /**
@@ -150,8 +157,19 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
     private void plotNewPath(){
         this.closestPair = this.order.getClosest(this.map);
         if(this.closestPair != null) {
-            plotPathToShelf(this.closestPair.getValue());
+            //get the closest unobstructed node adjacent to the shelf
+            this.targetNode = this.map.getNode(
+                    this.closestPair.getValue().getArea().getClosestCorner(this.getCurNode())
+            ).getClosestUnobstructedAdjacent(this.getCurNode());
+
+            this.curPath = this.getCurNode().getPathToNodeOnGrid(this.map, this.targetNode);
+
+            System.out.println(String.format("T=%s | Cart %s:(%d, %d) Plotting path to shelf <%s> at (%d, %d)",
+                    "x", this.toString(), this.getX(), this.getY(),
+                    this.closestPair.getValue().getName(), this.targetNode.getX(), this.targetNode.getY()
+            ));
         }else{
+            this.targetNode = null;
             this.curPath = null;
         }
     }
@@ -159,7 +177,8 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
     private void plotPathToDropOffPoint(){
         this.isDroppingOff = true;
         this.closestPair = null;
-        this.curPath = this.getCurNode().getPathToNodeOnGrid(this.map, this.map.getNode(this.order.getDropOffPoint().getX(), this.order.getDropOffPoint().getY()));
+        this.targetNode = this.map.getNode(this.order.getDropOffPoint().getX(), this.order.getDropOffPoint().getY());
+        this.curPath = this.getCurNode().getPathToNodeOnGrid(this.map, this.targetNode);
     }
 
     private boolean isCurPathObstructed() {
@@ -170,6 +189,15 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
             }
         }
         return false;
+    }
+
+    private void rePlotPath() {
+        this.curPath = this.getCurNode().getPathToNodeOnGrid(this.map, this.targetNode);
+
+        System.out.println(String.format("T=%s | Cart %s:(%d, %d) Reploting path to (%d, %d)",
+                "x", this.toString(), this.getX(), this.getY(),
+                this.targetNode.getX(), this.targetNode.getY()
+        ));
     }
 
     /**
@@ -184,15 +212,18 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
             if (this.curPath != null) { //if we already have a path
                 //check whether the path is still unobstructed
                 while(this.isCurPathObstructed()){
-                    this.plotNewPath();
+                    System.out.println(String.format("T=%s | Cart %s:(%d, %d) Path obstructed",
+                            time.toString(), this.toString(), this.getX(), this.getY()
+                    ));
+                    this.rePlotPath();
                 }
 
                 GridNode nextNode = this.curPath.pollLast();
                 if (nextNode != null) { //opposite should only happen if the order was empty or if the shelf is adjecent ot us
-                    System.out.println(String.format("T=%s | Cart %s:(%d, %d) About to move to (%d, %d). Is it obstructed? %b",
-                            time.toString(), this.toString(), this.getX(), this.getY(),
-                            nextNode.getX(), nextNode.getY(), nextNode.isObstructed()
-                    ));
+//                    System.out.println(String.format("T=%s | Cart %s:(%d, %d) About to move to (%d, %d). Is it obstructed? %b",
+//                            time.toString(), this.toString(), this.getX(), this.getY(),
+//                            nextNode.getX(), nextNode.getY(), nextNode.isObstructed()
+//                    ));
                     this.moveTo(nextNode); //move to the next node on the path
                 }
             } else {
@@ -231,10 +262,10 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
                         return;
                     }else { //plot new path
                         this.plotNewPath();
-                        System.out.println(String.format("T=%s | Cart %s:(%d, %d) Plotting path to shelf %s",
-                                time.toString(), this.toString(), this.getX(), this.getY(),
-                                this.closestPair.getValue().getName()
-                        ));
+//                        System.out.println(String.format("T=%s | Cart %s:(%d, %d) Plotting path to shelf %s",
+//                                time.toString(), this.toString(), this.getX(), this.getY(),
+//                                this.closestPair.getValue().getName()
+//                        ));
                     }
                 } else {
                     //gather from the shelf
@@ -262,17 +293,17 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
             //if we haven't found any path, just try again with delay
             if(nextNode != null) {
                 t1 = time.plusSeconds((long) (this.getCurNode().distance(nextNode) / this.getSpeed()));
-                System.out.println(String.format("T=%s | Cart %s:(%d, %d) scheduling event to %s: Moving to (%d, %d)",
-                        time.toString(), this.toString(), this.getX(), this.getY(),
-                        t1.toString(), nextNode.getX(), nextNode.getY()
-                ));
-                System.out.println(String.format("DEBUG: curNode(%d, %d), nextNode(%d, %d) delta_t=%d; distance=%d; speed=%d",
-                        this.getCurNode().getX(), this.getCurNode().getY(),
-                        nextNode.getX(), nextNode.getY(),
-                        (long)(this.getCurNode().distance(nextNode) / this.getSpeed()),
-                        (long)this.getCurNode().distance(nextNode),
-                        (long)this.getSpeed()
-                        ));
+//                System.out.println(String.format("T=%s | Cart %s:(%d, %d) scheduling event to %s: Moving to (%d, %d)",
+//                        time.toString(), this.toString(), this.getX(), this.getY(),
+//                        t1.toString(), nextNode.getX(), nextNode.getY()
+//                ));
+//                System.out.println(String.format("DEBUG: curNode(%d, %d), nextNode(%d, %d) delta_t=%d; distance=%d; speed=%d",
+//                        this.getCurNode().getX(), this.getCurNode().getY(),
+//                        nextNode.getX(), nextNode.getY(),
+//                        (long)(this.getCurNode().distance(nextNode) / this.getSpeed()),
+//                        (long)this.getCurNode().distance(nextNode),
+//                        (long)this.getSpeed()
+//                        ));
             }
             else{
                 t1 = time.plusSeconds(START_UP_DELAY);
