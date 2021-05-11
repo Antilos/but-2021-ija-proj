@@ -300,7 +300,7 @@ public class MainController extends Application implements Observer{
                         }
 
                         //perform event
-                        System.out.println(String.format("--T=%s | Performing action %s", time.toString(), e.getAction().toString()));
+                        //System.out.println(String.format("--T=%s | Performing action %s", time.toString(), e.getAction().toString()));
                         e.performAction(time);
 
                         tStep = NORMAL_STEP_SIZE;

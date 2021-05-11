@@ -57,13 +57,13 @@ public class Rectangle {
         return B.getY();
     }
 
-    public Targetable getBottomLeft(){ return A; }
+    public Targetable getTopLeft(){ return A; }
 
-    public Targetable getTopRight(){ return B; }
+    public Targetable getBottomRight(){ return B; }
 
-    public Targetable getBottomRight(){ return new Position(A.getX(), B.getY()); }
+    public Targetable getTopRight(){ return new Position(B.getX(), A.getY()); }
 
-    public Targetable getTopLeft(){ return new Position(A.getY(), B.getX()); }
+    public Targetable getBottomLeft(){ return new Position(A.getX(), B.getY()); }
 
     /**
      * Computes the smallest distance to the target from a corner of this area;

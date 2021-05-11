@@ -47,7 +47,7 @@ public class StoreMap extends GridMap {
         Rectangle area = shelf.getArea();
         for (int i = area.getX1(); i <= area.getX2(); i++) {
             for (int j = area.getY1(); j <= area.getY2(); j++) {
-                ((StoreNode) this.getNode(j, i)).setShelf(shelf);
+                ((StoreNode) this.getNode(i, j)).setShelf(shelf);
             }
         }
     }
