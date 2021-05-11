@@ -211,11 +211,23 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
         if(!this.isFree) {
             if (this.curPath != null) { //if we already have a path
                 //check whether the path is still unobstructed
-                while(this.isCurPathObstructed()){
+                if(this.isCurPathObstructed()){
                     System.out.println(String.format("T=%s | Cart %s:(%d, %d) Path obstructed",
                             time.toString(), this.toString(), this.getX(), this.getY()
                     ));
                     this.rePlotPath();
+
+                    //if we still haven't found any path
+                    if(this.curPath == null){
+                        //just wait a tick and try again
+                        LocalTime t1 = time.plusSeconds(START_UP_DELAY);
+                        System.out.println(String.format("T=%s | Cart %s:(%d, %d) Path not found; scheduling event to %s: Waiting",
+                                time.toString(), this.toString(), this.getX(), this.getY(),
+                                t1.toString()
+                        ));
+                        this.mainController.getCalendar().insertEvent(new Event(t1, 0, this::update));
+                        return;
+                    }
                 }
 
                 GridNode nextNode = this.curPath.pollLast();
@@ -228,10 +240,24 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
                 }
             } else {
                 this.plotNewPath();
-//                System.out.println(String.format("T=%s | Cart %s:(%d, %d) Ploting path to shelf %s",
-//                        time.toString(), this.toString(), this.getX(), this.getY(),
-//                        this.closestPair.getValue().getName()
-//                ));
+                if (this.curPath != null) {
+                    System.out.println(String.format("T=%s | Cart %s:(%d, %d) Ploting path to shelf %s",
+                            time.toString(), this.toString(), this.getX(), this.getY(),
+                            this.closestPair.getValue().getName()
+                    ));
+                }else{
+                    System.out.println(String.format("T=%s | Cart %s:(%d, %d) Couldn't find a path",
+                            time.toString(), this.toString(), this.getX(), this.getY()
+                    ));
+                    //just wait a tick and try again
+                    LocalTime t1 = time.plusSeconds(START_UP_DELAY);
+                    System.out.println(String.format("T=%s | Cart %s:(%d, %d) scheduling event to %s: Waiting",
+                            time.toString(), this.toString(), this.getX(), this.getY(),
+                            t1.toString()
+                    ));
+                    this.mainController.getCalendar().insertEvent(new Event(t1, 0, this::update));
+                    return;
+                }
             }
 
             //check whether we made it to the end
