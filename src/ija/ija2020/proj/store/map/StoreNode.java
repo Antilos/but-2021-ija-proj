@@ -107,7 +107,7 @@ public class StoreNode extends GridNode {
                             observers();
                         }
                     });
-            Text t = new Text(getX()*100,getY()*100+100,shelf.getName());
+            Text t = new Text(getX()*100,getY()*100+80,shelf.getName());
             t.setFont(new Font(50));
             t.setTextAlignment(TextAlignment.JUSTIFY);
             t.setText(shelf.getName());
