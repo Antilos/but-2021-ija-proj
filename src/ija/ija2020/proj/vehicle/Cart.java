@@ -48,6 +48,7 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
 
     private boolean hover = false;
     private GridNode targetNode;
+    private boolean pathWasObstructedLastUpdate;
 
     /**
      * Creates a new cart with a capacity and speed
@@ -209,6 +210,9 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
         this.setChanged();
         this.notifyObservers();
         if(!this.isFree) {
+            if (this.pathWasObstructedLastUpdate){
+
+            }
             if (this.curPath != null) { //if we already have a path
                 //check whether the path is still unobstructed
                 if(this.isCurPathObstructed()){
@@ -219,9 +223,10 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
 
                     //if we still haven't found any path
                     if(this.curPath == null){
+                        pathWasObstructedLastUpdate = true;
                         //just wait a tick and try again
                         LocalTime t1 = time.plusSeconds(START_UP_DELAY);
-                        System.out.println(String.format("T=%s | Cart %s:(%d, %d) Path not found; scheduling event to %s: Waiting",
+                        System.out.println(String.format("T=%s | Cart %s:(%d, %d) scheduling event to %s: Waiting",
                                 time.toString(), this.toString(), this.getX(), this.getY(),
                                 t1.toString()
                         ));
@@ -230,21 +235,28 @@ public class Cart extends Observable implements Movable, Stockable, Drawable {
                     }
                 }
 
-                GridNode nextNode = this.curPath.pollLast();
-                if (nextNode != null) { //opposite should only happen if the order was empty or if the shelf is adjecent ot us
+                if(this.curPath != null) {
+                    GridNode nextNode = this.curPath.pollLast();
+                    if (nextNode != null) { //opposite should only happen if the order was empty or if the shelf is adjecent ot us
 //                    System.out.println(String.format("T=%s | Cart %s:(%d, %d) About to move to (%d, %d). Is it obstructed? %b",
 //                            time.toString(), this.toString(), this.getX(), this.getY(),
 //                            nextNode.getX(), nextNode.getY(), nextNode.isObstructed()
 //                    ));
-                    this.moveTo(nextNode); //move to the next node on the path
+                        this.moveTo(nextNode); //move to the next node on the path
+                    }
                 }
             } else {
-                this.plotNewPath();
+                if(this.pathWasObstructedLastUpdate){
+                    this.rePlotPath();
+                }else {
+                    this.plotNewPath();
+                }
                 if (this.curPath != null) {
-                    System.out.println(String.format("T=%s | Cart %s:(%d, %d) Ploting path to shelf %s",
+                    System.out.println(String.format("T=%s | Cart %s:(%d, %d) FOUND PATH; Ploting path to node (%d, %d)",
                             time.toString(), this.toString(), this.getX(), this.getY(),
-                            this.closestPair.getValue().getName()
+                            this.targetNode.getX(), this.targetNode.getY()
                     ));
+                    this.pathWasObstructedLastUpdate = false;
                 }else{
                     System.out.println(String.format("T=%s | Cart %s:(%d, %d) Couldn't find a path",
                             time.toString(), this.toString(), this.getX(), this.getY()
